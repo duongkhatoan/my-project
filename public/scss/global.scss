@@ -1,0 +1,56 @@
+.box {
+    padding: 20px !important;
+}
+#preUpload {
+    .img-div {
+        position: relative;
+        width: 100px;
+        height: 100px;
+        float: left;
+        margin-right: 5px;
+        margin-left: 5px;
+        margin-bottom: 10px;
+        margin-top: 10px;
+        .img-preview {
+            opacity: 1;
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            max-width: auto;
+            transition: 0.5s ease;
+            backface-visibility: hidden;
+        }
+        .middle {
+            transition: 0.5s ease;
+            opacity: 0;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            -ms-transform: translate(-50%, -50%);
+            text-align: center;
+        }
+        &:hover {
+            .image {
+                opacity: 0.3;
+            }
+            .middle {
+                opacity: 1;
+            }
+        }
+    }
+}
+.sorttableProduct {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 40px;
+    padding: 0px 40px;
+    .imgThumbPro {
+        .img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+    }
+}
