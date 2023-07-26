@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', [FrontPageController::class, 'index'])->name('index');
+Route::get('/gio-hang', [FrontPageController::class, 'cart'])->name('giohang');
 
 Route::prefix('product')->name('product.')->group(function () {
     Route::get('/{product}', [ProductController::class, 'show'])->name('show');
@@ -29,9 +30,8 @@ Route::prefix('product')->name('product.')->group(function () {
 });
 
 
-Route::get('/test', function () {
-    return view('test');
-});
+
+
 // handle add to cart
 
 Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add');

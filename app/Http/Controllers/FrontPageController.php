@@ -18,4 +18,8 @@ class FrontPageController extends Controller
         })->get();
         return view('home.index', compact('posts', 'productSpecial'));
     }
+
+    public function cart(){
+        return view('front.cart');
+    }
 }
