@@ -61,7 +61,7 @@ class Product extends Model implements HasMedia
     public static function getBasicInfo($productId)
     {
         // Lấy thông tin cơ bản của sản phẩm theo id
-        $product = self::select('id','name', 'image', 'sell_price', 'discount_price')
+        $product = self::select('id', 'name', 'image', 'sell_price', 'discount_price')
             ->where('id', $productId)
             ->first();
 
@@ -70,5 +70,79 @@ class Product extends Model implements HasMedia
         $product->price = $price;
 
         return $product;
+    }
+
+    // Trong model Product
+    public function attributes()
+    {
+        return $this->belongsToMany(Attribute::class, 'variant_attributes', 'product_id', 'attribute_id')
+            ->withPivot('value_id');
+    }
+
+
+    public function variants()
+    {
+        return $this->hasMany(ProductVariant::class, 'product_id');
+    }
+    // public function variantss(): BelongsToMany
+    // {
+    //     return $this->belongsToMany(VariantAttribute::class, 'product_variants')
+    //         ->withPivot('price', 'quantity');
+    // }
+    public function variantsx()
+    {
+        return $this->belongsToMany(VariantAttribute::class, 'product_variants')
+            ->withPivot('price', 'quantity')
+            ->using(ProductVariant::class);
+    }
+    public function getAttributesWithValues()
+    {
+        $attributesWithValues = [];
+
+        foreach ($this->attributes as $attribute) {
+            $attributeValues = $attribute->values->whereIn('id', $attribute->pivot->attribute_value_id);
+            $attributesWithValues[] = [
+                'attribute' => $attribute,
+                'values' => $attributeValues,
+            ];
+        }
+
+        return $attributesWithValues;
+    }
+    public function variantAttributes()
+    {
+        return $this->hasMany(VariantAttribute::class, 'product_id');
+    }
+    public function attribute()
+    {
+        return $this->belongsTo(Attribute::class, 'attribute_id');
+    }
+    public function attributeValue()
+    {
+        return $this->belongsTo(AttributeValue::class, 'attribute_value_id');
+    }
+    public function getAttributeValues()
+    {
+        $variantAttributes = $this->variantAttributes()
+            ->with('attribute', 'attributeValue')
+            ->get();
+
+        $productAttributes = [];
+        foreach ($variantAttributes as $attribute) {
+            $attributeName = $attribute->attribute->name;
+            $attributeValue = $attribute->attributeValue->value;
+
+            // Kiểm tra xem giá trị đã tồn tại trong mảng hay chưa
+            if (!isset($productAttributes[$attributeName])) {
+                $productAttributes[$attributeName] = [
+                    'id' => $attribute->attribute->id,
+                ];
+            }
+
+            if (!in_array($attributeValue, $productAttributes[$attributeName])) {
+                $productAttributes[$attributeName]['value'][$attribute->attributeValue->id] = $attributeValue;
+            }
+        }
+        return $productAttributes;
     }
 }

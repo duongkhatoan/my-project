@@ -54,3 +54,48 @@
         }
     }
 }
+.listAttributeValue {
+    .item {
+        margin-bottom: 10px;
+        padding: 20px 10px;
+        border: 1px solid #bfbfbf;
+        border-radius: 10px;
+        .title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #ff421a;
+            margin-bottom: 10px;
+        }
+        .value {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 10px;
+            .valueItem {
+                padding: 10px;
+                border: 1px solid #bfbfbf;
+                border-radius: 10px;
+                position: relative;
+                .name {
+                    text-align: center;
+                }
+                .deleteValue {
+                    position: absolute;
+                    top: -15px;
+                    right: -10px;
+                    z-index: 1;
+                    background-color: #000;
+                    border-radius: 20px;
+                    padding: 5px 7px 3px 7px;
+                }
+            }
+        }
+    }
+}
+
+.productAttribute {
+    .variant-row {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 10px;
+    }
+}

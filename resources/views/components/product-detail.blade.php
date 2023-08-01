@@ -1,6 +1,7 @@
 <div class="product-deatils-section float-left w-100">
     <div class="container">
         <div class="row">
+            {{-- @dd($variants); --}}
             <div class="left-columm col-lg-5 col-md-5">
                 <div class="product-large-image tab-content">
                     <div class="tab-pane active" id="product-main" role="tabpanel" aria-labelledby="product-tab-main">
@@ -61,7 +62,7 @@
                     <div class="description">
                         {!! $product->excerpt !!}
                     </div>
-                    
+                    {{-- @dd($productAttributes) --}}
                     {{-- <ul class="countdown countdown1 float-left w-100">
                         <li><span class="days">00</span>
                             <p class="days_text">Days</p>
@@ -81,18 +82,33 @@
                         <div class="old-price">$150.00</div>
                     </div>
                     <div class="product-variants float-left w-100">
-                        <div class="col-md-3 col-sm-6 col-xs-12 size-options d-flex align-items-center">
-                            <h5>Size:</h5>
-
-                            <select class="form-control" name="select">
-                                <option value="" selected="">Size</option>
-                                <option value="black">Medium</option>
-                                <option value="white">Large</option>
-                                <option value="gold">Small</option>
-                                <option value="rose gold">Extra large</option>
-                            </select>
+                        {{-- @foreach ($variants as $variant)
+                            <ul>
+                                @foreach ($variant->attributes as $attribute)
+                                    <li>
+                                        {{ $attribute->name }}:
+                                        {{ $variant->values->where('attribute_id', $attribute->id)->first()->value }}
+                                    </li>
+                                @endforeach
+                            </ul>
+                        @endforeach --}}
+                        <hr>
+                        <div class="productOption">
+                            @foreach ($productAttributes as $key => $attributeName)
+                                <div class="attSelect">
+                                    <div class="listAtt">
+                                        @foreach ($attributeName['value'] as $index => $value)
+                                            <div class="attribute-btn" data-attribute-id="{{ $attributeName['id'] }}"
+                                                data-attribute-value="{{ $index }}">
+                                                {{ $value }}
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                    <hr>
+                                </div>
+                            @endforeach
                         </div>
-                        <div class="color-option d-flex align-items-center">
+                        {{-- <div class="color-option d-flex align-items-center">
                             <h5>color :</h5>
                             <ul class="color-categories">
                                 <li class="active">
@@ -105,7 +121,7 @@
                                     <a class="tt-yellow" href="#" title="Yellow"></a>
                                 </li>
                             </ul>
-                        </div>
+                        </div> --}}
                     </div>
                     <div class="btn-cart d-flex align-items-center float-left w-100">
                         <h5>qty:</h5>

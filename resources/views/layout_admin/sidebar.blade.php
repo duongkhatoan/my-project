@@ -104,6 +104,23 @@
                     </li>
                 </ul>
             </li>
+            <li class="treeview {{ $prefix == 'admin/attribute' ? 'active' : '' }}">
+                <a href="#">
+                    <i data-feather="file"></i>
+                    <span>Attributes</span>
+                    <span class="pull-right-container">
+                        <i class="fa fa-angle-right pull-right"></i>
+                    </span>
+                </a>
+                <ul class="treeview-menu">
+                    <li class="{{ $route == 'admin.attribute.index' ? 'active' : '' }}">
+                        <a href="{{ route('admin.attribute.index') }}"><i class="ti-more"></i>All attributes</a>
+                    </li>
+                    <li class="{{ $route == 'admin.attributeValue.index' ? 'active' : '' }}">
+                        <a href="{{ route('admin.attributeValue.index') }}"><i class="ti-more"></i>All attributeValue</a>
+                    </li>
+                </ul>
+            </li>
 
             <li class="header nav-small-cap">User Interface</li>
 

@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\AttributeController;
+use App\Http\Controllers\Admin\AttributeValueController;
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\PostCategoryController;
@@ -78,4 +80,24 @@ Route::prefix('product')->name('product.')->group(function () {
 
     Route::post('/updateMediaPosition/{product}', [ProductController::class, 'updateMediaPosition'])->name('updateMediaPosition');
     Route::delete('/media/delete/{media}', [ProductController::class, 'destroyMedia'])->name('media.destroy');
+});
+
+// attributes
+Route::prefix('attribute')->name('attribute.')->group(function () {
+    Route::get('/', [AttributeController::class, 'index'])->name('index');
+    Route::get('/create', [AttributeController::class, 'create'])->name('create');
+    Route::post('/store', [AttributeController::class, 'store'])->name('store');
+    Route::get('/edit/{attribute}', [AttributeController::class, 'edit'])->name('edit');
+    Route::post('/update/{attribute}', [AttributeController::class, 'update'])->name('update');
+    Route::get('/delete/{attribute}', [AttributeController::class, 'delete'])->name('delete');
+});
+
+// attributes values
+Route::prefix('attributeValue')->name('attributeValue.')->group(function () {
+    Route::get('/', [AttributeValueController::class, 'index'])->name('index');
+    Route::get('/create', [AttributeValueController::class, 'create'])->name('create');
+    Route::post('/store', [AttributeValueController::class, 'store'])->name('store');
+    Route::get('/edit/{attributeValue}', [AttributeValueController::class, 'edit'])->name('edit');
+    Route::post('/update/{attributeValue}', [AttributeValueController::class, 'update'])->name('update');
+    Route::get('/delete/{attributeValue}', [AttributeValueController::class, 'delete'])->name('delete');
 });

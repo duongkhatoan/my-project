@@ -4,6 +4,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\Front\ProductController;
 use App\Http\Controllers\FrontPageController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\ProductController as ControllersProductController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -35,3 +36,7 @@ Route::prefix('product')->name('product.')->group(function () {
 // handle add to cart
 
 Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add');
+
+
+// handle select att products
+Route::post('/process-selected-attributes', [ControllersProductController::class, 'handleSelectAtt']);

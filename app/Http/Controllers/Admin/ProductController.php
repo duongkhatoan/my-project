@@ -5,9 +5,12 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreProductAdminRequest;
 use App\Http\Requests\UpdateProductAdminRequest;
+use App\Models\Attribute;
 use App\Models\Category;
 use App\Models\CategoryProduct;
 use App\Models\Product;
+use App\Models\ProductVariant;
+use App\Models\VariantAttribute;
 use Illuminate\Http\Request;
 use Intervention\Image\ImageManagerStatic as Image;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -50,14 +53,16 @@ class ProductController extends Controller
             }
         }
 
-        return redirect()->route('admin.product.edit',$product->id)->with('success', 'Sản phẩm đã được tạo thành công');
+        return redirect()->route('admin.product.edit', $product->id)->with('success', 'Sản phẩm đã được tạo thành công');
     }
     public function edit(Product $product)
     {
 
         $categoryTree = (new Category())->buildCategoryTree();
         $categorySelected = $product->categories()->pluck('id')->toArray();
-        return view('admin.product.edit', compact('categoryTree', 'product', 'categorySelected'));
+        $attributes = Attribute::all();
+        $productVariants = $product->variants;
+        return view('admin.product.edit', compact('categoryTree', 'product', 'categorySelected', 'attributes', 'productVariants'));
     }
     public function update(UpdateProductAdminRequest $request, Product $product)
     {
@@ -93,6 +98,72 @@ class ProductController extends Controller
             $categoryIds = $request->category_id;
             $product->categories()->sync($categoryIds);
         }
+
+
+        $variantsData = $request->input('variants');
+        if ($variantsData) {
+            foreach ($variantsData as $variantId => $variantData) {
+                $variant = ProductVariant::find($variantId);
+                foreach ($variantData['attributes'] as $attributeId => $attributeValueId) {
+                    if ($attributeValueId) {
+                        VariantAttribute::updateOrCreate(
+                            ['variant_id' => $variant->id, 'attribute_id' => $attributeId],
+                            ['value_id' => $attributeValueId]
+                        );
+                    } else {
+                        $variantAtt = VariantAttribute::where('attribute_id', $attributeId)->first();
+                        $variantAtt->delete();
+                    }
+                }
+
+                // Cập nhật giá và số lượng cho biến thể
+                $variant->update([
+                    'price' => $variantData['price'],
+                    'quantity' => $variantData['quantity'],
+                ]);
+            }
+            $existingVariantIds = array_keys($variantsData);
+            $currentVariantIds = $product->variants->pluck('id')->toArray();
+            $deletedVariantIds = array_diff($currentVariantIds, $existingVariantIds);
+            // dd($deletedVariantIds, $currentVariantIds);
+            foreach ($deletedVariantIds as $deletedVariantId) {
+                // Xóa biến thể khỏi cơ sở dữ liệu
+                ProductVariant::destroy($deletedVariantId);
+            }
+        }
+
+
+        if ($request->input('variant')) {
+            $variants = $request->input('variant');
+
+            foreach ($variants as $each) {
+                // Tạo một biến thể mới
+                // dd($each);
+                $variant = new ProductVariant();
+
+                // Lưu thông tin của biến thể
+                $variant->product_id = $product->id;
+                $variant->price = $each['price'];
+                $variant->quantity = $each['quantity'];
+                $variant->save();
+                // Lưu thông tin của các thuộc tính của biến thể
+
+                foreach ($each['attributes'] as $attributeId => $attributeValueId) {
+                    // dd($attributeValueId);
+                    if ($attributeValueId) {
+                        VariantAttribute::create([
+                            'variant_id' => $variant->id,
+                            'attribute_id' => $attributeId,
+                            'value_id' => $attributeValueId,
+                            'product_id' => $product->id,
+                        ]);
+                        // dd(1);
+                    }
+                }
+            }
+        }
+
+
 
         return redirect()->back()->with('success', 'Product đã được cập nhật thành công');
     }

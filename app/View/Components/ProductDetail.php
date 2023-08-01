@@ -9,12 +9,17 @@ use Illuminate\View\Component;
 class ProductDetail extends Component
 {
     public $product;
+    public $variants;
+    public $productAttributes;
     /**
      * Create a new component instance.
      */
     public function __construct($product)
     {
         $this->product = $product;
+        $this->variants = $this->product->variants;
+        $this->productAttributes  = $this->product->getAttributeValues();
+        // dd($this->productAttributes);
     }
 
     /**

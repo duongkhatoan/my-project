@@ -45,6 +45,71 @@
                                     @enderror
                                 </div>
                             </div>
+                            <div class="form-group">
+                                <h5>Product Attributes<span class="text-danger"></span></h5>
+                                <div class="controls">
+                                    <div id="variant-section" class="productAttribute">
+                                        <!-- Các dòng input cho việc thêm biến thể sẽ được tạo ở đây -->
+                                    </div>
+                                    <button type="button" class="btn btn-primary" id="add-variant-btn">Add Variant</button>
+                                </div>
+                                @error('attributes')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+
+                            </div>
+                            <div class="form-group">
+                                <h5>Exist variants<span class="text-danger"></span></h5>
+                                <div class="controls productAttribute">
+                                    @foreach ($productVariants as $variant)
+                                        <div class="variant-row">
+                                            <div class="item">
+                                                <label for="price">Giá:</label>
+                                                <input class="form-control" type="number"
+                                                    name="{{ 'variants[' . $variant->id . '][price]' }}"
+                                                    value="{{ $variant->price }}">
+                                            </div>
+                                            <div class="item">
+                                                <label for="quantity">Số lượng:</label>
+                                                <input class="form-control" type="number"
+                                                    name="{{ 'variants[' . $variant->id . '][quantity]' }}"
+                                                    value="{{ $variant->quantity }}">
+                                            </div>
+
+                                            @foreach ($attributes as $attribute)
+                                                <div class="item">
+                                                    <label
+                                                        for="{{ 'attribute_' . $attribute->id }}">{{ $attribute->name }}:</label>
+                                                    <select
+                                                        name="{{ 'variants[' . $variant->id . '][attributes][' . $attribute->id . ']' }}"
+                                                        class="form-control" id="{{ 'attribute_' . $attribute->id }}">
+                                                        <option value="">Select {{ $attribute->name }}</option>
+                                                        @foreach ($attribute->attribute_values as $value)
+                                                            <option value="{{ $value->id }}"
+                                                                @if ($value->id == $variant->values->where('attribute_id', $attribute->id)->first()?->id ? 'selected' : '') selected @endif>
+                                                                {{ $value->value }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            @endforeach
+                                            <div class="form-group">
+                                                <button class="btn btn-danger remove-variant-btn">Remove</button>
+                                            </div>
+
+                                        </div>
+                                    @endforeach
+                                </div>
+                                @error('attributes')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+
+                            </div>
+
+
+                            {{-- <button type="submit" class="btn btn-success">Save Variants</button> --}}
+
+
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
@@ -283,6 +348,100 @@
                         }
                     });
                 }
+            });
+        });
+
+
+        // handle productAtt
+        // $(document).ready(function() {
+        //     // Đối tượng chứa các thuộc tính và giá trị của chúng
+        //     var attributes = @json($attributes);
+
+        //     // Xử lý sự kiện khi người dùng nhấn vào nút "Thêm biến thể"
+        //     $(".add-variant-btn").click(function() {
+        //         // Tạo một customProduct mới
+        //         var newCustomProduct = $('<div class="customProduct"></div>');
+
+        //         // Lặp qua các thuộc tính và tạo select box và trường nhập liệu cho mỗi thuộc tính
+        //         attributes.forEach(function(attribute) {
+        //             var selectBox = '<div class="item">' +
+        //                 '<div class="name">' + attribute.name + '</div>' +
+        //                 '<div class="select-' + attribute.name + '">' +
+        //                 '<select name="attributes[' + attribute.id + '][]" class="form-control">' +
+        //                 '<option value="">Select options</option>';
+        //             attribute.attribute_values.forEach(function(value) {
+        //                 selectBox += '<option value="' + value.id + '">' + value.value +
+        //                     '</option>';
+        //             });
+        //             selectBox += '</select>' +
+        //                 '</div>' +
+        //                 '</div>';
+
+        //             newCustomProduct.append(selectBox);
+        //         });
+
+        //         // Thêm trường nhập liệu cho quantity và price
+        //         var quantityInput = '<div class="item">' +
+        //             '<div class="name">Quantity</div>' +
+        //             '<div><input type="number" name="quantityAtt[]" class="form-control" data-validation-required-message="This field is required"></div>' +
+        //             '</div>';
+        //         var priceInput = '<div class="item">' +
+        //             '<div class="name">Price</div>' +
+        //             '<div><input type="number" name="priceAtt[]" class="form-control" data-validation-required-message="This field is required"></div>' +
+        //             '</div>';
+
+        //         newCustomProduct.append(quantityInput);
+        //         newCustomProduct.append(priceInput);
+        //         var deleteButton = '<button class="delete-btn">Xóa</button>';
+        //         newCustomProduct.append(deleteButton);
+
+        //         // Thêm customProduct mới vào bên trong productAttribute
+        //         $(".productAttribute").append(newCustomProduct);
+        //     });
+        //     $(document).on("click", ".delete-btn", function() {
+        //         // Xóa customProduct chứa nút "Xóa" mà người dùng nhấn
+        //         $(this).closest(".customProduct").remove();
+        //     });
+        // });
+
+        $(document).ready(function() {
+            // Xử lý khi người dùng nhấn nút "Add Variant"
+            $("#add-variant-btn").click(function() {
+                // Đếm số dòng biến thể đã có
+                var rowCount = $(".variant-row").length;
+
+                // Tạo một dòng input mới cho việc thêm biến thể
+                var variantRow = `
+            <div class="variant-row">
+                @foreach ($attributes as $attribute)
+                    <div class="form-group">
+                        <label for="variant[${rowCount}][{{ $attribute->id }}]">{{ $attribute->name }}:</label>
+                        <select name="variant[${rowCount}][attributes][{{ $attribute->id }}]" class="form-control">
+                            <option value="">-- Select {{ $attribute->name }} --</option>
+                            @foreach ($attribute->attribute_values as $value)
+                                <option value="{{ $value->id }}">{{ $value->value }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                @endforeach
+                <div class="form-group">
+                    <label for="variant[${rowCount}][price]">Price:</label>
+                    <input type="number" name="variant[${rowCount}][price]" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="variant[${rowCount}][quantity]">Quantity:</label>
+                    <input type="number" name="variant[${rowCount}][quantity]" class="form-control">
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-danger remove-variant-btn">Remove</button>
+                </div>
+            </div>`;
+
+                // Thêm dòng input mới vào phần "variant-section"
+                $("#variant-section").append(variantRow);
+            });
+            $(document).on('click', '.remove-variant-btn', function() {
+                $(this).closest(".variant-row").remove();
             });
         });
     </script>

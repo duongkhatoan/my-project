@@ -30,6 +30,8 @@ class UpdateProductAdminRequest extends FormRequest
             'discount_price' => 'numeric|min:' . ($this->input('discount_price') ?? 0),
             'sell_price' => 'numeric',
             'slug' => 'required|string',
+            'variant' => 'array',
+            'variants' => 'array',
         ];
     }
 }
