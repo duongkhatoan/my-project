@@ -36,30 +36,59 @@ class ProductController extends Controller
 
     public function handleSelectAtt(Request $request)
     {
+        // dd($request->all());
         // Lấy thông tin các thuộc tính đã chọn từ request
         $selectedAttributes = $request->input('attributes');
+
+        // Mảng chứa các cặp giá trị attribute_id và value_id đã lựa chọn
+        $selectedAttributeValuePairs = [];
+        $attributeIds = [];
+        foreach ($selectedAttributes as $each) {
+            $attributeIds[] = $each['id'];
+        }
+        // dd($attributeIds);
+        // Mảng tạm để lưu các attribute_id đã xuất hiện
+
 
         // Duyệt qua danh sách các thuộc tính đã chọn
         foreach ($selectedAttributes as $attribute) {
             // Lấy id và value của thuộc tính
             $attributeId = $attribute['id'];
             $attributeValue = $attribute['value'];
-            // Xử lý các tác vụ liên quan đến việc tìm kiếm biến thể sản phẩm tương ứng,
-            // tính toán giá, và các tác vụ khác.
 
-            // Ví dụ: Tìm biến thể sản phẩm dựa trên id và value của thuộc tính
+            // Tìm các bản ghi trong bảng variant_attributes có attribute_id và value_id trùng với thuộc tính đã chọn
             $variants = VariantAttribute::where('attribute_id', $attributeId)
                 ->where('value_id', $attributeValue)
                 ->get();
-            $variantIds = $variants->pluck('variant_id');
-            $attributeValuePairs = VariantAttribute::whereIn('variant_id', $variantIds)
-                ->pluck('value_id', 'attribute_id')
-                ->toArray();
-            $uniqueAttributeValuePairs[] = array_diff($attributeValuePairs, $variantIds->toArray());
+            // dd($selectedAttributes);
+            // Duyệt qua các bản ghi đã tìm được và lấy variant_id để tìm các cặp giá trị attribute_id và value_id khác
+            foreach ($variants as $variant) {
+                // Tìm các bản ghi trong bảng variant_attributes có cùng variant_id nhưng khác attribute_id và value_id
+                $otherVariants = VariantAttribute::where('variant_id', $variant->variant_id)
+                    ->whereNotIn('attribute_id', $attributeIds)
+                    ->get();
+                // dd($otherVariants);
+                // Duyệt qua các bản ghi đã tìm được và lấy cặp giá trị attribute_id và value_id
+                foreach ($otherVariants as $otherVariant) {
+                    $selectedAttributeValuePair = [
+                        'attribute_id' => $otherVariant->attribute_id,
+                        'value_id' => $otherVariant->value_id,
+                    ];
 
-
-            // ToDo: Tính toán giá tiền. Nếu tất cả attribute nằm trong bảng variant_att thì mình mới lấy giá được. Nếu ko có thì chỉ đẩy thuộc tính cần chọn thôi
+                    if (!in_array($selectedAttributeValuePair, $selectedAttributeValuePairs)) {
+                        $selectedAttributeValuePairs[] = $selectedAttributeValuePair;
+                        $existingPairs[$variant->variant_id][] = $otherVariant->attribute_id;
+                    }
+                    // $attributeIds[] = $otherVariant->attribute_id;
+                }
+            }
         }
-        dd($uniqueAttributeValuePairs);
+
+
+        // ToDo: Done product attribute must have do get price and quantity
+
+
+        // Hiển thị kết quả (chỉ để kiểm tra)
+        dd($selectedAttributeValuePairs);
     }
 }
