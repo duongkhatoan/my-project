@@ -108,38 +108,40 @@
     }
 }
 
-
-.boxMargin{
+.boxMargin {
     margin: 50px 0px;
 }
 .quantity_value::-webkit-outer-spin-button,
 .quantity_value::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
+    -webkit-appearance: none;
+    margin: 0;
 }
 
-
-.product-deatils-section{
-    .productOption{
-        .attSelect{
+.product-deatils-section {
+    .productOption {
+        .attSelect {
             margin-bottom: 5px;
-            .name{
+            .name {
                 font-size: 16px;
                 font-weight: bold;
                 margin-bottom: 5px;
             }
-            .listAtt{
+            .listAtt {
                 display: grid;
-                grid-template-columns: repeat(10,1fr);
+                grid-template-columns: repeat(10, 1fr);
                 gap: 10px;
-                .attribute-btn{
+                .attribute-btn {
                     padding: 10px;
                     border: 1px solid #bfbfbf;
                     text-align: center;
-                    &:hover{
+                    &.disabled {
+                        pointer-events: none;
+                        opacity: 0.4;
+                    }
+                    &:hover {
                         cursor: pointer;
                     }
-                    &.active{
+                    &.active {
                         background-color: #000;
                         color: #fff;
                     }
