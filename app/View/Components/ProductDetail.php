@@ -20,6 +20,7 @@ class ProductDetail extends Component
         $this->variants = $this->product->variants;
         $this->productAttributes  = $this->product->getAttributeValues();
         // dd($this->productAttributes);
+        // dd($this->productAttributes);
     }
 
     /**

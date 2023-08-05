@@ -134,7 +134,8 @@
                     padding: 10px;
                     border: 1px solid #bfbfbf;
                     text-align: center;
-                    &.disabled {
+                    &.disabled,
+                    &.disabledSelect {
                         pointer-events: none;
                         opacity: 0.4;
                     }

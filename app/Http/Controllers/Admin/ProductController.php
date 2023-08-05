@@ -101,18 +101,21 @@ class ProductController extends Controller
 
 
         $variantsData = $request->input('variants');
-        if ($variantsData) {
+        // dd($variantsData);
+        if ($variantsData != null) {
             foreach ($variantsData as $variantId => $variantData) {
                 $variant = ProductVariant::find($variantId);
                 foreach ($variantData['attributes'] as $attributeId => $attributeValueId) {
                     if ($attributeValueId) {
                         VariantAttribute::updateOrCreate(
-                            ['variant_id' => $variant->id, 'attribute_id' => $attributeId],
-                            ['value_id' => $attributeValueId]
+                            ['variant_id' => $variant->id, 'attribute_id' => $attributeId, 'product_id' => $product->id],
+                            ['value_id' => $attributeValueId,]
                         );
                     } else {
-                        $variantAtt = VariantAttribute::where('attribute_id', $attributeId)->first();
-                        $variantAtt->delete();
+                        $variantAtt = VariantAttribute::where('attribute_id', $attributeId)->where('variant_id', $variant->id)->first();
+                        if ($variantAtt) {
+                            $variantAtt->delete();
+                        }
                     }
                 }
 
@@ -129,6 +132,12 @@ class ProductController extends Controller
             foreach ($deletedVariantIds as $deletedVariantId) {
                 // Xóa biến thể khỏi cơ sở dữ liệu
                 ProductVariant::destroy($deletedVariantId);
+            }
+        } else {
+            $variantProduct = ProductVariant::where('product_id', $product->id)->get();
+            // dd($variantProduct);
+            foreach ($variantProduct as $each) {
+                $each->delete();
             }
         }
 

@@ -128,21 +128,53 @@ class Product extends Model implements HasMedia
             ->get();
 
         $productAttributes = [];
+        $disabledAttributeValues = []; // Mảng chứa value_id của các thuộc tính cần disable
+
+        // Tạo mảng lưu thông tin các biến thể của các thuộc tính
+        $attributeVariants = [];
+
         foreach ($variantAttributes as $attribute) {
             $attributeName = $attribute->attribute->name;
             $attributeValue = $attribute->attributeValue->value;
+            $attributeValueId = $attribute->attributeValue->id;
 
             // Kiểm tra xem giá trị đã tồn tại trong mảng hay chưa
             if (!isset($productAttributes[$attributeName])) {
                 $productAttributes[$attributeName] = [
-                    'id' => $attribute->attribute->id,
+                    'attribute_id' => $attribute->attribute->id,
+                    'values' => [], // Tạo mảng để lưu giá trị thuộc tính
                 ];
             }
 
-            if (!in_array($attributeValue, $productAttributes[$attributeName])) {
-                $productAttributes[$attributeName]['value'][$attribute->attributeValue->id] = $attributeValue;
+            // Thêm giá trị vào mảng values của thuộc tính
+            $productAttributes[$attributeName]['values'][$attributeValueId] = $attributeValue;
+
+            // Kiểm tra nếu quantity = 0 thì thêm value_id vào mảng disabledAttributeValues
+            if ($attribute->variant->quantity === 0) {
+                $disabledAttributeValues[] = $attributeValueId;
+            }
+
+            // Lưu thông tin biến thể thuộc tính
+            if (!isset($attributeVariants[$attributeValueId])) {
+                $attributeVariants[$attributeValueId] = [
+                    'quantity' => $attribute->variant->quantity,
+                ];
+            } else {
+                // Kiểm tra nếu đã có biến thể có cùng value_id thì kiểm tra và cập nhật quantity
+                if ($attributeVariants[$attributeValueId]['quantity'] !== $attribute->variant->quantity) {
+                    $attributeVariants[$attributeValueId]['quantity'] = null;
+                }
             }
         }
-        return $productAttributes;
+
+        // Kiểm tra và lọc các value_id cần disable dựa trên thông tin biến thể thuộc tính
+        $disabledAttributeValues = array_filter($disabledAttributeValues, function ($valueId) use ($attributeVariants) {
+            return $attributeVariants[$valueId]['quantity'] === 0;
+        });
+
+        return [
+            'productAttributes' => $productAttributes,
+            'disabledAttributeValues' => $disabledAttributeValues,
+        ];
     }
 }

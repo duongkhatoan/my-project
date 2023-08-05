@@ -8,6 +8,7 @@
     <script>
         $(document).ready(function() {
             var selectedGroups = {};
+            var productId = $('#product-barcode').val();
             $('.attribute-btn').on('click', function() {
                 var attributeId = $(this).data('attribute-id');
                 var attributeValue = $(this).data('attribute-value');
@@ -35,17 +36,14 @@
                     selectedGroups[attributeId] = attributeId;
                 }
 
-                // if ($(this).hasClass('active')) {
-                //     selectedGroups[attributeId] = attributeId;
-                // } else {
-                //     delete selectedGroups[attributeId];
-                // }
-                // $(this).toggleClass('active');
-
                 var activeAttributes = $('.attribute-btn.active');
                 // Tạo một mảng để lưu thông tin các thuộc tính
                 var selectedAttributes = [];
-
+                var btnSelectAtt = [];
+                btnSelectAtt.push({
+                    id: attributeId,
+                    value: attributeValue
+                });
                 // Duyệt qua danh sách các thuộc tính có class "active" và lấy thông tin của chúng
                 activeAttributes.each(function() {
                     var attributeId = $(this).data('attribute-id');
@@ -61,7 +59,9 @@
                     method: 'POST',
                     data: {
                         _token: '{{ csrf_token() }}',
-                        attributes: JSON.stringify(selectedAttributes)
+                        attributes: JSON.stringify(selectedAttributes),
+                        product: productId,
+                        btnSelect: btnSelectAtt,
                     },
                     success: function(response) {
                         if (response.success) {
@@ -75,25 +75,39 @@
                                 });
 
                                 // Vô hiệu hóa các nút thuộc tính không nằm trong dữ liệu trả về
-                                $('.attribute-btn').not('.active').each(function() {
-                                    var btnAttributeId = $(this).data('attribute-id');
-                                    var btnAttributeValue = $(this).data(
-                                        'attribute-value');
-                                    var isDisabled = !selectedAttributes.some(function(
-                                        item) {
-                                        return item.id == btnAttributeId && item
-                                            .value == btnAttributeValue;
-                                    });
-                                    if (isDisabled) {
-                                        $(this).addClass('disabled');
-                                    }
+                                $('.attribute-btn').not('.active').not('.disabledSelect').each(
+                                    function() {
+                                        var btnAttributeId = $(this).data('attribute-id');
+                                        var btnAttributeValue = $(this).data(
+                                            'attribute-value');
+                                        var isDisabled = !selectedAttributes.some(function(
+                                            item) {
+                                            return item.id == btnAttributeId && item
+                                                .value == btnAttributeValue;
+                                        });
+                                        if (isDisabled) {
+                                            $(this).addClass('disabled');
+                                        }
 
-                                });
+                                    });
                                 $('.product-information .price').html(
                                     'Vui lòng chọn thêm thuộc tính để hiện giá');
+                                if (response.rawAttributeId) {
+                                    $('.attribute-btn').not('.active').not('.disabledSelect')
+                                        .each(
+                                            function() {
+                                                var btnAttributeId = $(this).data(
+                                                    'attribute-id');
+                                                if (btnAttributeId == response.rawAttributeId) {
+                                                    $(this).removeClass('disabled');
+                                                }
+
+                                            });
+                                }
                             } else {
                                 $('.product-information .price').html(
                                     `<div class="regular-price">${response.price}đ</div>`);
+
                             }
 
                         } else {

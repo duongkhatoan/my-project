@@ -94,11 +94,15 @@
                         @endforeach --}}
                         <hr>
                         <div class="productOption">
-                            @foreach ($productAttributes as $key => $attributeName)
+                            @foreach ($productAttributes['productAttributes'] as $attributeName)
                                 <div class="attSelect">
                                     <div class="listAtt">
-                                        @foreach ($attributeName['value'] as $index => $value)
-                                            <div class="attribute-btn" data-attribute-id="{{ $attributeName['id'] }}"
+                                        @foreach ($attributeName['values'] as $index => $value)
+                                            @php
+                                                $isDisabled = in_array($index, $productAttributes['disabledAttributeValues']);
+                                            @endphp
+                                            <div class="attribute-btn {{ $isDisabled ? 'disabledSelect' : '' }}"
+                                                data-attribute-id="{{ $attributeName['attribute_id'] }}"
                                                 data-attribute-value="{{ $index }}">
                                                 {{ $value }}
                                             </div>
@@ -107,6 +111,7 @@
                                     <hr>
                                 </div>
                             @endforeach
+
                         </div>
                         {{-- <div class="color-option d-flex align-items-center">
                             <h5>color :</h5>
@@ -123,6 +128,7 @@
                             </ul>
                         </div> --}}
                     </div>
+                    <input type="hidden" id="product-barcode" value="{{ $product->sku }}">
                     <div class="btn-cart d-flex align-items-center float-left w-100">
                         <h5>qty:</h5>
                         <input value="1" type="number">

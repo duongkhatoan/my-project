@@ -4,6 +4,7 @@
         <div class="box">
             <div class="box-header with-border">
                 <h3 class="box-title">Update {{ $product->name }}</h3>
+                <a class="preview" target="_blank" style="float:right;" href="{{ route('product.show', $product) }}">Preview</a>
             </div>
             <!-- /.box-header -->
             <div class="box-body">

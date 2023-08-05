@@ -39,18 +39,20 @@ class ProductController extends Controller
     {
         $data = $request->all();
         $selectedAttributes = json_decode($data['attributes'], true);
+        $rawAttributeId = '';
+        $product = Product::where('sku', $data['product'])->first();
         if ($selectedAttributes) {
             $selectedAttributeValuePairs = [];
             $price = null;
             $quantity = null;
             if (count($selectedAttributes) > 1) {
-                $uniqueMatchingAttributes = [];
 
                 // Make sure that thost attribute_id,value_id is all has the same variant_id
                 $matchingVariantIds = VariantAttribute::select('variant_id')
                     ->whereIn('attribute_id', array_column($selectedAttributes, 'id'))
                     ->whereIn('value_id', array_column($selectedAttributes, 'value'))
                     ->groupBy('variant_id')
+                    ->where('product_id', $product->id)
                     ->havingRaw('COUNT(DISTINCT attribute_id) = ?', [count($selectedAttributes)])
                     ->pluck('variant_id')
                     ->first();
@@ -91,14 +93,37 @@ class ProductController extends Controller
                         }
                     }
                 }
-            } else {
-                $variants = VariantAttribute::where('attribute_id', $selectedAttributes[0]['id'])->where('value_id', $selectedAttributes[0]['value'])->get();
+
+                $variants =  VariantAttribute::where('attribute_id', $data['btnSelect'][0]['id'])
+                    ->where('value_id', $data['btnSelect'][0]['value'])
+                    ->where('product_id', $product->id)
+                    ->get();
+
+                // dd($variants);
                 foreach ($variants as $variant) {
-                    $variantP = VariantAttribute::where('variant_id', $variant->variant_id)->get();
-                    if ($variantP->count() == 1) {
-                        dd($variantP);
+                    // Tìm các bản ghi trong bảng variant_attributes có cùng variant_id nhưng khác attribute_id và value_id
+                    $otherVariants = VariantAttribute::where('variant_id', $variant->variant_id)
+                        ->where('attribute_id', '!=', $data['btnSelect'][0]['id'])
+                        ->where('product_id', $product->id)
+                        ->get();
+                    // dd($otherVariants);
+                    // dd($otherVariants);
+                    // Duyệt qua các bản ghi đã tìm được và lấy cặp giá trị attribute_id và value_id
+                    foreach ($otherVariants as $otherVariant) {
+                        $selectedAttributeValuePair = [
+                            'attribute_id' => $otherVariant->attribute_id,
+                            'value_id' => $otherVariant->value_id,
+                        ];
+
+                        if (!in_array($selectedAttributeValuePair, $selectedAttributeValuePairs)) {
+                            $selectedAttributeValuePairs[] = $selectedAttributeValuePair;
+                            $existingPairs[$variant->variant_id][] = $otherVariant->attribute_id;
+                        }
+                        // $attributeIds[] = $otherVariant->attribute_id;
                     }
                 }
+                // dd($selectedAttributeValuePairs);
+            } else {
                 $attributeIds[] = $selectedAttributes[0]['id'];
                 foreach ($selectedAttributes as $attribute) {
                     // Lấy id và value của thuộc tính
@@ -108,6 +133,7 @@ class ProductController extends Controller
                     // Tìm các bản ghi trong bảng variant_attributes có attribute_id và value_id trùng với thuộc tính đã chọn
                     $variants = VariantAttribute::where('attribute_id', $attributeId)
                         ->where('value_id', $attributeValue)
+                        ->where('product_id', $product->id)
                         ->get();
                     // dd($selectedAttributes);
                     // Duyệt qua các bản ghi đã tìm được và lấy variant_id để tìm các cặp giá trị attribute_id và value_id khác
@@ -115,6 +141,7 @@ class ProductController extends Controller
                         // Tìm các bản ghi trong bảng variant_attributes có cùng variant_id nhưng khác attribute_id và value_id
                         $otherVariants = VariantAttribute::where('variant_id', $variant->variant_id)
                             ->whereNotIn('attribute_id', $attributeIds)
+                            ->where('product_id', $product->id)
                             ->get();
                         // dd($otherVariants);
                         // Duyệt qua các bản ghi đã tìm được và lấy cặp giá trị attribute_id và value_id
@@ -132,6 +159,7 @@ class ProductController extends Controller
                         }
                     }
                 }
+                $rawAttributeId = $selectedAttributes[0]['id'];
             }
 
             // Hiển thị kết quả (chỉ để kiểm tra)
@@ -140,6 +168,7 @@ class ProductController extends Controller
                 'data' => $selectedAttributeValuePairs,
                 'price' => $price,
                 'quantity' => $quantity,
+                'rawAttributeId' => $rawAttributeId,
             ]);
         } else {
             return response()->json([
