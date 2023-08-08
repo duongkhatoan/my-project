@@ -88,6 +88,9 @@
                                         if (isDisabled) {
                                             $(this).addClass('disabled');
                                         }
+                                         else {
+                                            $(this).removeClass('disabled');
+                                        }
 
                                     });
                                 $('.product-information .price').html(
@@ -105,10 +108,47 @@
                                             });
                                 }
                             } else {
+                                if (response.otherRemoveDisables.length > 0) {
+                                    console.log(1);
+                                    var otherRemoveDisables = response.otherRemoveDisables.map(
+                                        function(item) {
+                                            return {
+                                                id: item.attribute_id,
+                                                value: item.value_id
+                                            };
+                                        });
+                                    $('.attribute-btn').not('.active').not('.disabledSelect')
+                                        .each(
+                                            function() {
+                                                var btnAttributeId = $(this).data(
+                                                    'attribute-id');
+                                                var btnAttributeValue = $(this).data(
+                                                    'attribute-value');
+                                                var isNotDisable = otherRemoveDisables.some(
+                                                    function(
+                                                        item) {
+                                                        return item.id == btnAttributeId &&
+                                                            item
+                                                            .value == btnAttributeValue;
+                                                    });
+                                                if (isNotDisable) {
+                                                    $(this).removeClass('disabled');
+                                                }
+                                                // else {
+                                                //     $(this).addClass('disabled');
+                                                // }
+
+                                            });
+                                }
+                            }
+                            if (response.price) {
                                 $('.product-information .price').html(
                                     `<div class="regular-price">${response.price}đ</div>`);
+                            } else {
+
 
                             }
+
 
                         } else {
                             $('.attribute-btn').each(function() {

@@ -43,6 +43,7 @@ class ProductController extends Controller
         $product = Product::where('sku', $data['product'])->first();
         if ($selectedAttributes) {
             $selectedAttributeValuePairs = [];
+            $otherRemoveDisables = [];
             $price = null;
             $quantity = null;
             if (count($selectedAttributes) > 1) {
@@ -59,6 +60,45 @@ class ProductController extends Controller
                 // If not match that u breaking the rules i set
                 if (!$matchingVariantIds) {
                     return null;
+                }
+                foreach ($selectedAttributes as $attribute) {
+                    $attributeIds[] = $attribute['id'];
+                }
+
+                // $attributeIds[] = $selectedAttributes[0]['id'];
+                foreach ($selectedAttributes as $attribute) {
+                    // Lấy id và value của thuộc tính
+                    $attributeId = $attribute['id'];
+                    $attributeValue = $attribute['value'];
+
+                    // Tìm các bản ghi trong bảng variant_attributes có attribute_id và value_id trùng với thuộc tính đã chọn
+                    $variants = VariantAttribute::where('attribute_id', $attributeId)
+                        ->where('value_id', $attributeValue)
+                        ->where('product_id', $product->id)
+                        ->get();
+                    // dd($selectedAttributes);
+                    // Duyệt qua các bản ghi đã tìm được và lấy variant_id để tìm các cặp giá trị attribute_id và value_id khác
+                    foreach ($variants as $variant) {
+                        // Tìm các bản ghi trong bảng variant_attributes có cùng variant_id nhưng khác attribute_id và value_id
+                        $otherVariants = VariantAttribute::where('variant_id', $variant->variant_id)
+                            ->whereIn('attribute_id', $attributeIds)
+                            ->where('product_id', $product->id)
+                            ->get();
+                        // dd($otherVariants);
+                        // Duyệt qua các bản ghi đã tìm được và lấy cặp giá trị attribute_id và value_id
+                        foreach ($otherVariants as $otherVariant) {
+                            $selectedAttributeValuePair = [
+                                'attribute_id' => $otherVariant->attribute_id,
+                                'value_id' => $otherVariant->value_id,
+                            ];
+
+                            if (!in_array($selectedAttributeValuePair, $selectedAttributeValuePairs)) {
+                                $selectedAttributeValuePairs[] = $selectedAttributeValuePair;
+                                $existingPairs[$variant->variant_id][] = $otherVariant->attribute_id;
+                            }
+                            // $attributeIds[] = $otherVariant->attribute_id;
+                        }
+                    }
                 }
                 // If enough attributes will get price
                 $matchingAttributes = VariantAttribute::where('variant_id', $matchingVariantIds)
@@ -77,6 +117,7 @@ class ProductController extends Controller
                     }
                 } else {
                     // get available attributes
+                    $selectedAttributeValuePairs = [];
                     foreach ($matchingAttributes as $matchingAttribute) {
                         $isDifferent = true;
                         foreach ($selectedAttributes as $selectedAttribute) {
@@ -92,36 +133,37 @@ class ProductController extends Controller
                             ];
                         }
                     }
+                    // dd($selectedAttributeValuePairs);
                 }
 
-                $variants =  VariantAttribute::where('attribute_id', $data['btnSelect'][0]['id'])
-                    ->where('value_id', $data['btnSelect'][0]['value'])
-                    ->where('product_id', $product->id)
-                    ->get();
+                // $variants =  VariantAttribute::where('attribute_id', $data['btnSelect'][0]['id'])
+                //     ->where('value_id', $data['btnSelect'][0]['value'])
+                //     ->where('product_id', $product->id)
+                //     ->get();
 
-                // dd($variants);
-                foreach ($variants as $variant) {
-                    // Tìm các bản ghi trong bảng variant_attributes có cùng variant_id nhưng khác attribute_id và value_id
-                    $otherVariants = VariantAttribute::where('variant_id', $variant->variant_id)
-                        ->where('attribute_id', '!=', $data['btnSelect'][0]['id'])
-                        ->where('product_id', $product->id)
-                        ->get();
-                    // dd($otherVariants);
-                    // dd($otherVariants);
-                    // Duyệt qua các bản ghi đã tìm được và lấy cặp giá trị attribute_id và value_id
-                    foreach ($otherVariants as $otherVariant) {
-                        $selectedAttributeValuePair = [
-                            'attribute_id' => $otherVariant->attribute_id,
-                            'value_id' => $otherVariant->value_id,
-                        ];
+                // // dd($variants);
+                // foreach ($variants as $variant) {
+                //     // Tìm các bản ghi trong bảng variant_attributes có cùng variant_id nhưng khác attribute_id và value_id
+                //     $otherVariants = VariantAttribute::where('variant_id', $variant->variant_id)
+                //         ->where('attribute_id', '!=', $data['btnSelect'][0]['id'])
+                //         ->where('product_id', $product->id)
+                //         ->get();
+                //     // dd($otherVariants);
+                //     // dd($otherVariants);
+                //     // Duyệt qua các bản ghi đã tìm được và lấy cặp giá trị attribute_id và value_id
+                //     foreach ($otherVariants as $otherVariant) {
+                //         $otherRemoveDisable = [
+                //             'attribute_id' => $otherVariant->attribute_id,
+                //             'value_id' => $otherVariant->value_id,
+                //         ];
 
-                        if (!in_array($selectedAttributeValuePair, $selectedAttributeValuePairs)) {
-                            $selectedAttributeValuePairs[] = $selectedAttributeValuePair;
-                            $existingPairs[$variant->variant_id][] = $otherVariant->attribute_id;
-                        }
-                        // $attributeIds[] = $otherVariant->attribute_id;
-                    }
-                }
+                //         if (!in_array($otherRemoveDisable, $otherRemoveDisables)) {
+                //             $otherRemoveDisables[] = $otherRemoveDisable;
+                //             $existingPairs[$variant->variant_id][] = $otherVariant->attribute_id;
+                //         }
+                //         // $attributeIds[] = $otherVariant->attribute_id;
+                //     }
+                // }
                 // dd($selectedAttributeValuePairs);
             } else {
                 $attributeIds[] = $selectedAttributes[0]['id'];
@@ -169,6 +211,7 @@ class ProductController extends Controller
                 'price' => $price,
                 'quantity' => $quantity,
                 'rawAttributeId' => $rawAttributeId,
+                'otherRemoveDisables' => $otherRemoveDisables,
             ]);
         } else {
             return response()->json([
