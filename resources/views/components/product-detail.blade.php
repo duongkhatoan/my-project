@@ -43,6 +43,9 @@
 
             </div>
             <div class="right-columm col-lg-7 col-md-7">
+                <input id="skuId" type="hidden" name="skuId" value="">
+                <input id="selectAtt" type="hidden" value="true">
+                <input id="productId" type="hidden" name="productId" value="{{ $product->id }}">
                 <div class="product-information">
                     <h4 class="product-title text-capitalize float-left w-100">
                         <a href="product-details.html" class="float-left w-100">{{ $product->name }}
@@ -81,59 +84,44 @@
                         <div class="regular-price">$100.00</div>
                         <div class="old-price">$150.00</div>
                     </div>
-                    <div class="product-variants float-left w-100">
-                        {{-- @foreach ($variants as $variant)
-                            <ul>
-                                @foreach ($variant->attributes as $attribute)
-                                    <li>
-                                        {{ $attribute->name }}:
-                                        {{ $variant->values->where('attribute_id', $attribute->id)->first()->value }}
-                                    </li>
-                                @endforeach
-                            </ul>
-                        @endforeach --}}
-                        <hr>
-                        <div class="productOption">
-                            @foreach ($productAttributes['productAttributes'] as $attributeName)
-                                <div class="attSelect">
-                                    <div class="listAtt">
-                                        @foreach ($attributeName['values'] as $index => $value)
-                                            @php
-                                                $isDisabled = in_array($index, $productAttributes['disabledAttributeValues']);
-                                            @endphp
-                                            <div class="attribute-btn {{ $isDisabled ? 'disabledSelect' : '' }}"
-                                                data-attribute-id="{{ $attributeName['attribute_id'] }}"
-                                                data-attribute-value="{{ $index }}">
-                                                {{ $value }}
-                                            </div>
-                                        @endforeach
-                                    </div>
-                                    <hr>
-                                </div>
-                            @endforeach
+                    @if ($productAttributes)
 
+
+                        <div class="product-variants float-left w-100">
+                            <hr>
+                            <div class="productOption">
+                                @foreach ($productAttributes['productAttributes'] as $attributeName)
+                                    <div class="attSelect">
+                                        <div class="listAtt">
+                                            @foreach ($attributeName['values'] as $index => $value)
+                                                @php
+                                                    $isDisabled = in_array($index, $productAttributes['disabledAttributeValues']);
+                                                @endphp
+                                                <div class="attribute-btn {{ $isDisabled ? 'disabledSelect' : '' }}"
+                                                    data-attribute-id="{{ $attributeName['attribute_id'] }}"
+                                                    data-attribute-value="{{ $index }}"
+                                                    name="attrbutes[{{ $attributeName['attribute_id'] }}]">
+                                                    {{ $value }}
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                        <hr>
+                                    </div>
+                                @endforeach
+                            </div>
                         </div>
-                        {{-- <div class="color-option d-flex align-items-center">
-                            <h5>color :</h5>
-                            <ul class="color-categories">
-                                <li class="active">
-                                    <a class="tt-pink" href="#" title="Pink"></a>
-                                </li>
-                                <li>
-                                    <a class="tt-blue" href="#" title="Blue"></a>
-                                </li>
-                                <li>
-                                    <a class="tt-yellow" href="#" title="Yellow"></a>
-                                </li>
-                            </ul>
-                        </div> --}}
-                    </div>
+                    @endif
                     <input type="hidden" id="product-barcode" value="{{ $product->sku }}">
                     <div class="btn-cart d-flex align-items-center float-left w-100">
                         <h5>qty:</h5>
-                        <input value="1" type="number">
-                        <button type="button" class="btn btn-primary btn-cart m-0" data-target="#cart-pop"
-                            data-toggle="modal"><i class="material-icons">shopping_cart</i> Add To Cart</button>
+                        <input value="1" type="number" name="quantity" class="quantity">
+                        {{-- <button type="button" class="btn btn-primary btn-cart m-0" data-target="#cart-pop"
+                            data-toggle="modal"><i class="material-icons">shopping_cart</i> Add To Cart</button> --}}
+                        <button type="button" class="btn btn-primary btn_add_to_cart m-0"
+                            data-product={{ $product->id }}>
+                            <i class="material-icons">shopping_cart</i>
+                            Add To Cart
+                        </button>
                     </div>
                     <div class="tt-links d-flex align-items-center float-left w-100 mb-15">
                         <a class="link btn-compare"><i class="material-icons">equalizer</i><span>Compare</span></a>
@@ -275,6 +263,48 @@
                     </form>
                 </div>
 
+            </div>
+        </div>
+    </div>
+</div>
+<div class="panel--sidebar" id="cart-sidebar">
+    <div class="panel__header">
+        <h3>Shopping Cart</h3>
+        <div class="panel__close">
+            <a class="js_panel__close">
+                <i class="fa-solid fa-xmark"></i>
+            </a>
+        </div>
+    </div>
+    <div class="panel__content">
+        <div class="page-cart page-cart-content">
+            <div class="loading ng-star-inserted">
+                <div class="vs-loading__load vs-loading--default">
+                    <div class="lds">
+                        <div class="lds__1"></div>
+                        <div class="lds__2"></div>
+                    </div>
+                </div>
+                <div class="cart-content page-cart-box">
+                    <div class="page-cart-tbody" id="listCartItems">
+
+                    </div>
+                </div>
+                <div class="cart-collaterals page-cart-right">
+                    <table cellspacing="0" class="page-cart-box table shop_table_responsive">
+                        <tbody>
+                            <tr class="cart-subtotal">
+                                <th>Thành Tiền</th>
+                                <td data-title="Thành tiền"><span class="cart-total-price">672,000,000</span>đ</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="clearfix"></div>
+                    <div class="cart-button">
+                        <a class="btn btn-default pull-left" href="san-pham">MUA THÊM</a>
+                        <a class="btn btn-red pull-right" href="thanh-toan">THANH TOÁN</a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

@@ -1,4 +1,6 @@
-var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+var csrfToken = document
+    .querySelector('meta[name="csrf-token"]')
+    .getAttribute("content");
 // Count all quantity product in localstorage
 function countItemsInCart() {
     var cartItems = JSON.parse(localStorage.getItem("cart_items")) || []; // Lấy dữ liệu từ localStorage
@@ -30,7 +32,7 @@ function loadCartItems() {
                 cartItemsHTML += `
             <div class="cart__item productid-${product.id}" data-id="${product.id}">
                     <div class="cart_item__img">
-                        <img src="${product.image}" alt="${product.name}"
+                        <img src="/${product.image}" alt="${product.name}"
                         style="height:70px;" loading="lazy">
                     </div>
                     <div class="cart_item__quantity quantity">
@@ -332,4 +334,90 @@ $(document).ready(function () {
             countItemsInCart();
         }
     }
+});
+
+// handle variant
+$(".btn_add_to_cart").click(function () {
+    const productId = $(this).data("product");
+    let skuId = "";
+    const quantity = parseInt(
+        $(this).closest(".btn-cart").find(".quantity").val()
+    );
+
+    // Kiểm tra số lượng có hợp lệ hay không
+    if (isNaN(quantity) || quantity <= 0) {
+        alert("Please enter a valid quantity.");
+        return;
+    }
+    if ($("#selectAtt").val() && $("#skuId").val()) {
+        skuId = $("#skuId").val();
+    }
+    // Gửi AJAX request đến route /cart/add
+    $.ajax({
+        url: "/cart/add",
+        method: "POST",
+        data: {
+            product_id: productId,
+            quantity: quantity,
+            skuId: skuId,
+            _token: csrfToken,
+        },
+        success: function (response) {
+            // Kiểm tra kết quả từ controller
+            if (response.success) {
+                if (!skuId) {
+                    var cartItem = {
+                        product_id: productId,
+                        quantity: quantity,
+                    };
+                } else {
+                    var cartItem = {
+                        product_id: productId,
+                        quantity: quantity,
+                        skuId: skuId,
+                    };
+                }
+                console.log(cartItem);
+                var cartItems =
+                    JSON.parse(localStorage.getItem("cart_items")) || [];
+                var updated = false;
+                for (var i = 0; i < cartItems.length; i++) {
+                    if (cartItems[i].skuId && cartItems[i].skuId == skuId) {
+                        cartItems[i].quantity += quantity;
+                        updated = true;
+                        break;
+                    }
+                    if (cartItems[i].product_id === productId && !cartItems[i].skuId) {
+                        // Nếu sản phẩm đã tồn tại, tăng quantity lên
+                        cartItems[i].quantity += quantity;
+                        updated = true;
+                        break;
+                    }
+                }
+                if (!updated) {
+                    // Nếu sản phẩm chưa tồn tại, thêm mới vào
+                    cartItems.push(cartItem);
+                }
+                localStorage.setItem("cart_items", JSON.stringify(cartItems));
+
+                toastr.success("Add product successfully!", "", {
+                    timeOut: 3000,
+                    positionClass: "toast-bottom-center",
+                    progressBar: true,
+                });
+                $("#cart-sidebar").addClass("active");
+                loadCartItems();
+                countItemsInCart();
+                // Hiển thị thông báo thành công
+                // alert(response.message);
+            } else {
+                // Nếu có lỗi, hiển thị thông báo lỗi từ server
+                alert(response.error);
+            }
+        },
+        error: function (error) {
+            // Xử lý lỗi nếu có
+            console.error("Error adding product to cart:", error);
+        },
+    });
 });

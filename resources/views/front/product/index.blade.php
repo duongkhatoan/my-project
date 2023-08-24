@@ -87,8 +87,7 @@
                                         });
                                         if (isDisabled) {
                                             $(this).addClass('disabled');
-                                        }
-                                         else {
+                                        } else {
                                             $(this).removeClass('disabled');
                                         }
 
@@ -144,9 +143,13 @@
                             if (response.price) {
                                 $('.product-information .price').html(
                                     `<div class="regular-price">${response.price}đ</div>`);
+                                $('.product-information .btn-cart .btn-cart').attr('disabled',
+                                    false);
+                                $('#skuId').val(response.skuId);
                             } else {
-
-
+                                $('.product-information .btn-cart .btn-cart').attr('disabled',
+                                    true);
+                                $('#skuId').val('');
                             }
 
 
@@ -154,6 +157,9 @@
                             $('.attribute-btn').each(function() {
                                 $(this).removeClass('disabled');
                             })
+                            $('.product-information .btn-cart .btn-cart').attr('disabled',
+                                true);
+                            $('#skuId').val('');
                         }
                     },
                     error: function(error) {
