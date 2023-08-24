@@ -143,11 +143,11 @@
                             if (response.price) {
                                 $('.product-information .price').html(
                                     `<div class="regular-price">${response.price}đ</div>`);
-                                $('.product-information .btn-cart .btn-cart').attr('disabled',
+                                $('.product-information .btn-cart .btn_add_to_cart').attr('disabled',
                                     false);
                                 $('#skuId').val(response.skuId);
                             } else {
-                                $('.product-information .btn-cart .btn-cart').attr('disabled',
+                                $('.product-information .btn-cart .btn_add_to_cart').attr('disabled',
                                     true);
                                 $('#skuId').val('');
                             }
@@ -157,7 +157,7 @@
                             $('.attribute-btn').each(function() {
                                 $(this).removeClass('disabled');
                             })
-                            $('.product-information .btn-cart .btn-cart').attr('disabled',
+                            $('.product-information .btn-cart .btn_add_to_cart').attr('disabled',
                                 true);
                             $('#skuId').val('');
                         }

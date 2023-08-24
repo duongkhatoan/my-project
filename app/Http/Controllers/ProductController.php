@@ -35,6 +35,7 @@ class ProductController extends Controller
                 if (!$product) {
                     return response()->json(['success' => false, 'message' => 'Product not exist']);
                 }
+                // TODO: NEED TO UPDATE INFOMATION ABOUT ATTRIBUTES AND ATTRIBUTES VALUE. add attributes selected at least (just try -> not necessarily)
                 $product->price = $productVariant->price;
             }
 

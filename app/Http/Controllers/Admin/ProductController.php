@@ -53,7 +53,7 @@ class ProductController extends Controller
             }
         }
 
-        return redirect()->route('admin.product.edit', $product->id)->with('success', 'Sản phẩm đã được tạo thành công');
+        return redirect()->route('admin.product.edit', $product->slug)->with('success', 'Sản phẩm đã được tạo thành công');
     }
     public function edit(Product $product)
     {
