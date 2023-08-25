@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Front\CategoryController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\Front\ProductController;
 use App\Http\Controllers\FrontPageController;
@@ -28,6 +29,11 @@ Route::prefix('product')->name('product.')->group(function () {
     // Route::get('/edit/{post}', [PostController::class, 'edit'])->name('edit');
     // Route::post('/{post}', [PostController::class, 'update'])->name('update');
     // Route::get('/delete/{post}', [PostController::class, 'destroy'])->name('delete');
+});
+
+
+Route::prefix('category')->name('category.')->group(function () {
+    Route::get('/{category}', [CategoryController::class, 'show'])->name('show');
 });
 
 

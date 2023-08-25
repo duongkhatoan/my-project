@@ -30,7 +30,9 @@ function loadCartItems() {
             $.each(response, function (index, product) {
                 totalPrice += parseInt(product.price) * product.quantity;
                 cartItemsHTML += `
-            <div class="cart__item productid-${product.id}" data-id="${product.id}">
+            <div class="cart__item productid-${product.id}" data-id="${
+                    product.id
+                }">
                     <div class="cart_item__img">
                         <img src="/${product.image}" alt="${product.name}"
                         style="height:70px;" loading="lazy">
@@ -69,8 +71,22 @@ function loadCartItems() {
                         <div class="pr-name">
                         <h3>${product.name}</h3>
                         </div>
+                        <div class="attribute">
+                        ${
+                            product.attributeObject
+                                ? product.attributeObject
+                                      .map(
+                                          (obj) =>
+                                              `<span class="attributeName">${obj.name}:</span>${obj.value}`
+                                      )
+                                      .join(" , ")
+                                : ""
+                        }
+                        </div>
                         <div class="pr-price" style="padding-top: 5px">
-                            <span class="js_cart_item_price">${product.price}</span>đ
+                            <span class="js_cart_item_price">${
+                                product.price
+                            }</span>đ
                         </div>
                     </div>
                     <div class="cart_item__trash trash-container">
@@ -377,7 +393,6 @@ $(".btn_add_to_cart").click(function () {
                         skuId: skuId,
                     };
                 }
-                console.log(cartItem);
                 var cartItems =
                     JSON.parse(localStorage.getItem("cart_items")) || [];
                 var updated = false;
@@ -387,7 +402,10 @@ $(".btn_add_to_cart").click(function () {
                         updated = true;
                         break;
                     }
-                    if (cartItems[i].product_id === productId && !cartItems[i].skuId) {
+                    if (
+                        cartItems[i].product_id === productId &&
+                        !cartItems[i].skuId
+                    ) {
                         // Nếu sản phẩm đã tồn tại, tăng quantity lên
                         cartItems[i].quantity += quantity;
                         updated = true;

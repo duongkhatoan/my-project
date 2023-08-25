@@ -76,7 +76,7 @@
                                                     <li
                                                         class="nav-item {{ $category->children->count() > 0 ? 'dropdown' : '' }}">
                                                         <a class="nav-link text-uppercase {{ $category->children->count() > 0 ? 'dropdown-toggle' : '' }}"
-                                                            href="">
+                                                            href="{{ route('category.show', $category) }}">
                                                             {{ $category->name }}
                                                         </a>
                                                         @if ($category->children->count() > 0)

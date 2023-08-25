@@ -23,6 +23,7 @@ class ProductController extends Controller
         $cartItems = $request->input('cartItems');
         $productIds = array_column($cartItems, 'product_id');
         $products = [];
+        // $attributes = [];
         foreach ($cartItems as $cartItem) {
             $product = Product::where('id', $cartItem['product_id'])
                 ->select('id', 'name', 'discount_price', 'sell_price', 'image')
@@ -37,6 +38,19 @@ class ProductController extends Controller
                 }
                 // TODO: NEED TO UPDATE INFOMATION ABOUT ATTRIBUTES AND ATTRIBUTES VALUE. add attributes selected at least (just try -> not necessarily)
                 $product->price = $productVariant->price;
+
+                if ($productVariant) {
+                    // Lấy thông tin về các thuộc tính của ProductVariant
+                    $variantAttributes = $productVariant->variantAttributes;
+                    foreach ($variantAttributes as $variantAttribute) {
+                        $attributes[] =
+                            [
+                                'name' => $variantAttribute->attribute->name,
+                                'value' => $variantAttribute->attributeValue->value,
+                            ];
+                        $product->attributeObject = $attributes;
+                    }
+                }
             }
 
             $products[] = $product;

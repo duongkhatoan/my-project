@@ -19,6 +19,11 @@ class Category extends Model
         'image',
     ];
 
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
+
     public function parent()
     {
         return $this->belongsTo(Category::class, 'parent_id');
