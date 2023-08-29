@@ -24,6 +24,7 @@
     <link href="{{ asset('frontpage/css/lightbox.css') }}" rel="stylesheet">
     <link href="{{ asset('frontpage/css/cookiealert.css') }}" rel="stylesheet">
     <link href="{{ asset('frontpage/css/panelsidebar.css') }}" rel="stylesheet">
+    <link href="{{ asset('frontpage/css/jquery-ui.css') }}" rel="stylesheet">
     <script src="https://kit.fontawesome.com/43a5bb49f6.js" crossorigin="anonymous"></script>
 
 
@@ -385,6 +386,7 @@
     <script src="{{ asset('frontpage/js/masonry.pkgd.min.js') }}"></script>
     <script src="{{ asset('frontpage/js/imagesloaded.pkgd.min.js') }}"></script>
     <script src="{{ asset('frontpage/js/jquery.zoom.min.js') }}"></script>
+    <script src="{{ asset('frontpage/js/jquery-ui.min.js') }}"></script>
 
     <!-- Cart handle -->
     <script src="{{ asset('frontpage/js/cart.js') }}"></script>

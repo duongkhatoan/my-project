@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Front\CategoryController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\Front\ProductController;
@@ -46,3 +47,7 @@ Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add')
 
 // handle select att products
 Route::post('/process-selected-attributes', [ControllersProductController::class, 'handleSelectAtt']);
+
+
+Route::get('admin/login', [AdminController::class, 'showLoginForm'])->name('admin.login');
+Route::post('admin/login', [AdminController::class, 'login'])->name('admin.login.submit');

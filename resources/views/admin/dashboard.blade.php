@@ -2,4 +2,5 @@
 
 @section('content')
     Welcome
+    {{ auth('admin')->user()->name }}
 @endsection
