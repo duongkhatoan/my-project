@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Front\CategoryController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\Front\ProductController;
+use App\Http\Controllers\Front\UserController;
 use App\Http\Controllers\FrontPageController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProductController as ControllersProductController;
@@ -49,5 +50,12 @@ Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add')
 Route::post('/process-selected-attributes', [ControllersProductController::class, 'handleSelectAtt']);
 
 
+
+// Login to admin panel
 Route::get('admin/login', [AdminController::class, 'showLoginForm'])->name('admin.login');
 Route::post('admin/login', [AdminController::class, 'login'])->name('admin.login.submit');
+
+
+Route::post('register', [UserController::class, 'register'])->name('user.register');
+Route::post('login', [UserController::class, 'login'])->name('user.login');
+Route::get('logout', [UserController::class, 'logout'])->name('user.logout');

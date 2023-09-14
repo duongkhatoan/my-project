@@ -25,13 +25,8 @@
                         <table cellspacing="0" class="page-cart-box table shop_table_responsive">
                             <tbody>
                                 <tr class="cart-subtotal">
-                                    <th>Thành Tiền</th>
+                                    <th>Tổng tiền</th>
                                     <td data-title="Thành tiền"><span class="cart-total-price"></span>đ</td>
-                                </tr>
-                                <tr class="cart-subtotal">
-                                    <th>Tổng Tiền</th>
-                                    <td data-title="Thành tiền"><span class="summary-cart-total-price"></span>
-                                    </td>
                                 </tr>
                             </tbody>
                         </table>

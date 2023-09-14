@@ -62,36 +62,47 @@
     <div class="modal fade" id="modalRegisterForm" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <div class="modal-header text-center">
-                    <h4 class="modal-title w-100 font-weight-medium text-left">Sign up</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body mx-3">
-                    <div class="md-form mb-4">
-                        <input type="text" id="RegisterForm-name" class="form-control validate"
-                            placeholder="Your name">
+                <form action="{{ route('user.register') }}" method="POST" id="registerForm">
+                    @csrf
+                    <div class="modal-header text-center">
+                        <h4 class="modal-title w-100 font-weight-medium text-left">Sign up</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
                     </div>
-                    <div class="md-form mb-4">
-                        <input type="email" id="RegisterForm-email" class="form-control validate"
-                            placeholder="Your email">
-                    </div>
-                    <div class="md-form mb-4">
-                        <input type="password" id="RegisterForm-pass" class="form-control validate"
-                            placeholder="Your password">
-                    </div>
-                    <div class="checkbox-link d-flex justify-content-between">
-                        <div class="left-col">
-                            <input id="remember-me" type="checkbox"><label for="remember_me">Remember Me</label>
+                    <div class="modal-body mx-3">
+                        <div class="md-form mb-4">
+                            <input type="text" name="name" class="form-control validate" placeholder="Your name">
+                            @error('name')
+                                <div class="alert alert-danger">{{ $message }}</div>
+                            @enderror
                         </div>
-                        <div class="right-col"><a href="#">Forget Password?</a></div>
+                        <div class="md-form mb-4">
+                            <input type="email" name="email" class="form-control validate" placeholder="Your email">
+                            @error('email')
+                                <div class="alert alert-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="md-form mb-4">
+                            <input type="password" name="password" class="form-control validate"
+                                placeholder="Your password">
+                            @error('password')
+                                <div class="alert alert-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="md-form mb-4">
+                            <input type="password" name="password_confirmation" class="form-control validate"
+                                placeholder="re-password">
+                            @error('password_confirmation')
+                                <div class="alert alert-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
                     </div>
-                </div>
 
-                <div class="modal-footer d-flex justify-content-center">
-                    <button class="btn btn-primary">Sign up</button>
-                </div>
+                    <div class="modal-footer d-flex justify-content-center">
+                        <button class="btn btn-primary">Sign up</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -99,33 +110,38 @@
     <!-- Login modal -->
     <div class="modal fade" id="modalLoginForm" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header text-center">
-                    <h4 class="modal-title w-100 font-weight-medium text-left">Sign in</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body mx-3">
-                    <div class="md-form mb-4">
-                        <input type="text" id="LoginForm-name" class="form-control validate" placeholder="Your name">
+            <form id="loginUserForm" action="{{ route('user.login') }}" method="POST">
+                @csrf
+                <div class="modal-content">
+                    <div class="modal-header text-center">
+                        <h4 class="modal-title w-100 font-weight-medium text-left">Sign in</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
                     </div>
-                    <div class="md-form mb-4">
-                        <input type="password" id="LoginForm-pass" class="form-control validate"
-                            placeholder="Your password">
-                    </div>
-                    <div class="checkbox-link d-flex justify-content-between">
-                        <div class="left-col">
-                            <input type="checkbox" id="remember_me"><label for="remember_me">Remember Me</label>
+                    <div class="modal-body mx-3">
+                        <div class="md-form mb-4">
+                            <input type="text" id="LoginForm-name" name="email" class="form-control validate"
+                                placeholder="your email">
                         </div>
-                        <div class="right-col"><a href="#">Forget Password?</a></div>
+                        <div class="md-form mb-4">
+                            <input type="password" id="LoginForm-pass" name="password" class="form-control validate"
+                                placeholder="Your password">
+                        </div>
+                        <div class="checkbox-link d-flex justify-content-between">
+                            <div class="left-col">
+                                <input type="checkbox" id="remember_me" name="remember_me"><label for="remember_me">Remember Me</label>
+                            </div>
+                            <div class="right-col"><a href="#">Forget Password?</a></div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer d-flex justify-content-center">
+                        <button class="btn btn-primary">Sign in</button>
                     </div>
                 </div>
 
-                <div class="modal-footer d-flex justify-content-center">
-                    <button class="btn btn-primary">Sign in</button>
-                </div>
-            </div>
+            </form>
         </div>
     </div>
 
@@ -387,6 +403,7 @@
     <script src="{{ asset('frontpage/js/imagesloaded.pkgd.min.js') }}"></script>
     <script src="{{ asset('frontpage/js/jquery.zoom.min.js') }}"></script>
     <script src="{{ asset('frontpage/js/jquery-ui.min.js') }}"></script>
+    <script src="{{ asset('frontpage/js/auth.js') }}"></script>
 
     <!-- Cart handle -->
     <script src="{{ asset('frontpage/js/cart.js') }}"></script>

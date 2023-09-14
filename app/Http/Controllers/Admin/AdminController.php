@@ -19,8 +19,8 @@ class AdminController extends Controller
     public function login(Request $request)
     {
         $credentials = $request->only('email', 'password');
-
-        if (auth()->guard('admin')->attempt($credentials)) {
+        $remember = $request->has('remember');
+        if (auth()->guard('admin')->attempt($credentials, $remember)) {
             // Đăng nhập thành công, chuyển hướng đến trang admin
             return redirect()->intended(route('admin.dashboard'))->with('success', 'Đăng nhập thành công!');
         }

@@ -373,10 +373,14 @@
                             <div id="user-dropdown" class="user-menu">
                                 <ul>
                                     <li><a href="my-account.html" class="text-capitalize">my account</a></li>
+                                    @if (Auth::check())
+                                    <li><a href="{{ route('user.logout') }}" class="button">Logout</a></li>
+                                    @else
                                     <li><a href="#" class="modal-view button" data-toggle="modal"
-                                            data-target="#modalRegisterForm">Register</a></li>
+                                        data-target="#modalRegisterForm">Register</a></li>
                                     <li><a href="#" class="modal-view button" data-toggle="modal"
-                                            data-target="#modalLoginForm">login</a></li>
+                                        data-target="#modalLoginForm">login</a></li>
+                                    @endif
                                 </ul>
                             </div>
                         </div>
