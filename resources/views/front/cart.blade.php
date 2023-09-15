@@ -37,6 +37,7 @@
         </div>
 
     </div>
+    {{-- @TODO: NEED DO CHECKOUT (IF HAVE CHECKBOX ?CHECKBOX=?? AND DONT HAVE CHECKBOX GET ALL FROM CARTITEMS) --}}
 @endsection
 @push('js')
     <script>
