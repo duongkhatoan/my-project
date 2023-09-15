@@ -7,29 +7,39 @@ use Illuminate\Support\Facades\File;
 
 class LocationController extends Controller
 {
-    public function province(){
+    public function location($type = null, $id = null)
+    {
         $data = load_file_location();
-        $provinces = $data->province;
-        return response()->json($provinces);
-    }
-    public function district($pronvice_id){
-        $data = load_file_location();
-        $districts = $data->district;
-        if($districts){
-            $filterData = array_filter($districts, function ($district) use ($pronvice_id) {
-                return $district->idProvince === $pronvice_id; // Điều kiện lọc theo tên tỉnh
-            });
-            return response()->json($filterData);
+        switch ($type) {
+            case 'province':
+                if($id){
+                    $data = $data->district;
+                    if($data){
+                        $data = array_filter($data, function ($item) use ($id) {
+                            return $item->idProvince === $id; // Điều kiện lọc theo tên tỉnh
+                        });
+                    }
+                }
+                else{
+                    $data = '';
+                }
+                break;
+            case 'district':
+                if($id){
+                    $data = $data->commune;
+                    if($data){
+                        $data = array_filter($data, function ($item) use ($id) {
+                            return $item->idDistrict === $id; // Điều kiện lọc theo tên tỉnh
+                        });
+                    }
+                }
+                break;
+            case 'ward':
+                $data = 'completed';
+                break;
+            default:
+                $data = '';
         }
-    }
-    public function ward($district_id){
-        $data = load_file_location();
-        $wards = $data->commune;
-        if($wards){
-            $filterData = array_filter($wards, function ($ward) use ($district_id) {
-                return $ward->idDistrict === $district_id; // Điều kiện lọc theo tên tỉnh
-            });
-            return response()->json($filterData);
-        }
+        return response()->json($data);
     }
 }

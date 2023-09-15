@@ -59,3 +59,15 @@ Route::post('admin/login', [AdminController::class, 'login'])->name('admin.login
 Route::post('register', [UserController::class, 'register'])->name('user.register');
 Route::post('login', [UserController::class, 'login'])->name('user.login');
 Route::get('logout', [UserController::class, 'logout'])->name('user.logout');
+
+
+// User
+Route::prefix('users')->name('users.')->group(function () {
+    Route::get('', [UserController::class, 'index'])->name('index');
+    Route::post('update/{user}', [UserController::class, 'update'])->name('update');
+    // Route::get('/create', [PostController::class, 'create'])->name('create');
+    // Route::post('/', [PostController::class, 'store'])->name('store');
+    // Route::get('/edit/{post}', [PostController::class, 'edit'])->name('edit');
+    // Route::post('/{post}', [PostController::class, 'update'])->name('update');
+    // Route::get('/delete/{post}', [PostController::class, 'destroy'])->name('delete');
+});

@@ -3,6 +3,7 @@
 @section('content')
     <div class="cart-area table-area pt-110 pb-95 float-left w-100">
         <div class="container">
+            <input type="hidden" id="totalHiddenPrice" value="">
             <div class="row page-cart">
                 <div class="col-md-8">
                     <div class="loading ng-star-inserted " id="" style="display: none;">

@@ -53,6 +53,7 @@ class ProductController extends Controller
                     $product->attributeObject = $attributes;
                 }
             }
+            $product->cartId = $cartItem['cartId'];
 
             $products[] = $product;
 

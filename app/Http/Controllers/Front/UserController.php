@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Front;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginUserRequest;
 use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\UpdateUserFrontRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -44,6 +45,42 @@ class UserController extends Controller
     public function logout()
     {
         Auth::logout();
-        return redirect()->back();
+        return redirect()->route('index');
+    }
+
+    public function index()
+    {
+        $provinces = load_all_provinces();
+        $districts ='';
+        $wards = '';
+        $user = Auth::user();
+        if ($user->province) {
+            $districts = load_district_base_on_provinces($user->province);
+            if ($user->district) {
+                $wards = load_wards_base_on_districts($user->district);
+            }
+        }
+        return view('front.user.my_account', compact('provinces', 'districts', 'wards'));
+    }
+
+    public function update(UpdateUserFrontRequest $request, User $user)
+    {
+        $user->update([
+            'name' => $request->name,
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'province' => $request->province,
+            'district' => $request->district,
+            'ward' => $request->ward,
+        ]);
+        if ($request->filled('current_password') && !Hash::check($request->current_password, $user->password)) {
+            return back()->with('error', 'Mật khẩu cũ không đúng.');
+        }
+        if ($request->filled('password')) {
+            $user->update([
+                'password' => Hash::make($request->password),
+            ]);
+        }
+        return redirect()->back()->with('success', 'Update successful');
     }
 }

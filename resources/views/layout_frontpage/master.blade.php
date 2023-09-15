@@ -26,6 +26,7 @@
     <link href="{{ asset('frontpage/css/panelsidebar.css') }}" rel="stylesheet">
     <link href="{{ asset('frontpage/css/jquery-ui.css') }}" rel="stylesheet">
     <script src="https://kit.fontawesome.com/43a5bb49f6.js" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
 
     <!-- Custom styles for this template -->
@@ -404,6 +405,8 @@
     <script src="{{ asset('frontpage/js/jquery.zoom.min.js') }}"></script>
     <script src="{{ asset('frontpage/js/jquery-ui.min.js') }}"></script>
     <script src="{{ asset('frontpage/js/auth.js') }}"></script>
+    <script src="{{ asset('frontpage/js/location.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     <!-- Cart handle -->
     <script src="{{ asset('frontpage/js/cart.js') }}"></script>

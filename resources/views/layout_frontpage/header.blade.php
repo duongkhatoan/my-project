@@ -372,7 +372,7 @@
                             </button>
                             <div id="user-dropdown" class="user-menu">
                                 <ul>
-                                    <li><a href="my-account.html" class="text-capitalize">my account</a></li>
+                                    <li><a href="{{ route('users.index') }}" class="text-capitalize">my account</a></li>
                                     @if (Auth::check())
                                     <li><a href="{{ route('user.logout') }}" class="button">Logout</a></li>
                                     @else
