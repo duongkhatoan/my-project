@@ -6,6 +6,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\Front\ProductController;
 use App\Http\Controllers\Front\UserController;
 use App\Http\Controllers\FrontPageController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProductController as ControllersProductController;
 use Illuminate\Support\Facades\Route;
@@ -71,3 +72,8 @@ Route::prefix('users')->name('users.')->group(function () {
     // Route::post('/{post}', [PostController::class, 'update'])->name('update');
     // Route::get('/delete/{post}', [PostController::class, 'destroy'])->name('delete');
 });
+
+
+Route::post('/checkboxProduct', [CartController::class, 'checkboxProduct'])->name('checkboxProduct');
+Route::get('/checkout', [CartController::class, 'checkout'])->name('checkout');
+Route::post('/order', [OrderController::class, 'order'])->name('order');

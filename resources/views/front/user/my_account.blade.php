@@ -119,6 +119,17 @@
                                                 </div>
                                                 <!-- End .form-group -->
                                             </div>
+                                            <div class="col-md-12">
+                                                <div class="form-group required-field">
+                                                    <label for="ward">address</label>
+                                                    <input type="text" class="form-control" id="address"
+                                                        placeholder="1234 Main St" required="" name="address" value="{{ $user->address }}">
+                                                    @error('address')
+                                                        <div class="alert alert-danger">{{ $message }}</div>
+                                                    @enderror
+                                                </div>
+                                                <!-- End .form-group -->
+                                            </div>
                                             <!-- End .col-md-4 -->
                                         </div>
                                         <!-- End .row -->

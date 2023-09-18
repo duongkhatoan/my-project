@@ -51,7 +51,7 @@ class UserController extends Controller
     public function index()
     {
         $provinces = load_all_provinces();
-        $districts ='';
+        $districts = '';
         $wards = '';
         $user = Auth::user();
         if ($user->province) {
@@ -60,7 +60,7 @@ class UserController extends Controller
                 $wards = load_wards_base_on_districts($user->district);
             }
         }
-        return view('front.user.my_account', compact('provinces', 'districts', 'wards'));
+        return view('front.user.my_account', compact('provinces', 'districts', 'wards', 'user'));
     }
 
     public function update(UpdateUserFrontRequest $request, User $user)
@@ -72,6 +72,7 @@ class UserController extends Controller
             'province' => $request->province,
             'district' => $request->district,
             'ward' => $request->ward,
+            'address' => $request->address
         ]);
         if ($request->filled('current_password') && !Hash::check($request->current_password, $user->password)) {
             return back()->with('error', 'Mật khẩu cũ không đúng.');

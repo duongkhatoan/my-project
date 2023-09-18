@@ -452,17 +452,46 @@ function checkProductToCheckOut() {
     var totalPriceDefault = $(".cart-area #totalHiddenPrice").val();
     var totalPriceCheckbox = 0;
     var checkedCheckboxes = $(".selectCheckOut:checked");
+    var cartItems = JSON.parse(localStorage.getItem("cart_items")) || [];
+    const arrayCheck  = [];
     if (checkedCheckboxes.length > 0) {
         checkedCheckboxes.each(function () {
-            // Lấy giá trị (value) của checkbox đã chọn
+            cartId = $(this).val();
+            console.log($(this).val());
+            var indexToUpdate = cartItems.findIndex(function (item) {
+                return item.cartId === cartId;
+            });
+            var itemToUpdate = cartItems[indexToUpdate];
+            if(itemToUpdate){
+                arrayCheck.push(itemToUpdate);
+            }
             price = get_price_product($(this));
             totalPriceCheckbox += price;
+        });
+        $.ajax({
+            url: "/checkboxProduct",
+            method: "POST",
+            data: {
+                data :arrayCheck,
+                _token: csrfToken,
+            },
+            success: function (response) {
+                // Kiểm tra kết quả từ controller
+                if (response.success) {
+                } else {
+                    // Nếu có lỗi, hiển thị thông báo lỗi từ server
+                    alert(response.error);
+                }
+            },
+            error: function (error) {
+                // Xử lý lỗi nếu có
+                console.error("Error adding product to cart:", error);
+            },
         });
         $(
             ".page-cart .cart-collaterals table.table tr td .cart-total-price"
         ).html(totalPriceCheckbox);
-    }
-    else{
+    } else {
         $(
             ".page-cart .cart-collaterals table.table tr td .cart-total-price"
         ).html(totalPriceDefault);

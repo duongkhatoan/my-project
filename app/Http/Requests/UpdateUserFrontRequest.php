@@ -30,6 +30,7 @@ class UpdateUserFrontRequest extends FormRequest
             'province' => 'string|nullable',
             'district' => 'string|nullable',
             'ward' => 'string|nullable',
+            'address' => 'string|nullable',
         ];
         if ($this->input('email') && $this->input('email') !== $this->user()->email) {
             $rules['email'] = 'required|string|email|max:255|unique:users';

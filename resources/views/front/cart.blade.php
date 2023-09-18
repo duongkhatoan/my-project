@@ -31,6 +31,7 @@
                                 </tr>
                             </tbody>
                         </table>
+                        <a class="btn btn-red" href="{{ route('checkout') }}">Thanh toán</a>
                     </div>
                 </div>
             </div>

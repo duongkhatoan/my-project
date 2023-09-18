@@ -20,6 +20,7 @@ class FrontPageController extends Controller
     }
 
     public function cart(){
+        session()->put('cartChecked', []);
         return view('front.cart');
     }
 }
