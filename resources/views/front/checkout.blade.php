@@ -2,7 +2,7 @@
 @section('content')
     <div class="checkout-inner float-left w-100">
         <div class="container">
-            <form class="needs-validation" action="{{ route('order') }}" method="POST">
+            <form class="needs-validation" id="checkoutForm">
                 @csrf
                 <div class="row">
                     <div class="cart-block-left col-md-4 order-md-2 mb-4">
@@ -22,7 +22,7 @@
                                 <div>
                                     <h6 class="my-0">Tổng tiền</h6>
                                 </div>
-                                <span class="text-muted">{{ $productList['total'] }}</span>
+                                <span class="text-muted" id="totalPrice"></span>
                             </div>
                             <div class="list-group-item d-flex justify-content-between">
                                 <div class="text-success">
@@ -35,7 +35,7 @@
                                 <strong>Total (USD)</strong>
                                 <strong>$35</strong>
                             </div>
-                            <button class="btn btn-primary btn-lg btn-primary">Place an order</button>
+                            <button id="placeOrderButton" class="btn btn-primary btn-lg btn-primary">Place an order</button>
                         </div>
                     </div>
                     <div class="cart-block-right col-md-8 order-md-1">
@@ -46,25 +46,19 @@
                                     <label for="firstName">name <span class="required">*</span></label>
                                     <input type="text" class="form-control" id="firstName" placeholder=""
                                         value="{{ $user->name }}" required="" name="name">
-                                    @error('name')
-                                        <div class="alert alert-danger">{{ $message }}</div>
-                                    @enderror
+                                    <p class="error_msg" id="name_error"></p>
                                 </div>
                                 <div class="col-md-4 mb-3">
                                     <label for="phone">Phone <span class="required">*</span></label>
                                     <input type="number" class="form-control" id="phone" placeholder="" name="phone"
                                         value="{{ $user->phone }}">
-                                    @error('phone')
-                                        <div class="alert alert-danger">{{ $message }}</div>
-                                    @enderror
+                                    <p class="error_msg" id="phone_error"></p>
                                 </div>
                                 <div class="col-md-4 mb-3">
                                     <label for="email">Email <span class="required">*</span></label>
                                     <input type="email" class="form-control" id="email" placeholder="you@example.com"
                                         name="email" value="{{ $user->email }}">
-                                    @error('email')
-                                        <div class="alert alert-danger">{{ $message }}</div>
-                                    @enderror
+                                    <p class="error_msg" id="email_error"></p>
                                 </div>
                             </div>
                         </div>
@@ -82,9 +76,7 @@
                                                     {{ $province->name }}</option>
                                             @endforeach
                                         </select>
-                                        @error('province')
-                                            <div class="alert alert-danger">{{ $message }}</div>
-                                        @enderror
+                                        <p class="error_msg" id="province_error"></p>
                                     </div>
                                     <!-- End .form-group -->
                                 </div>
@@ -102,9 +94,7 @@
                                                 @endforeach
                                             @endif
                                         </select>
-                                        @error('district')
-                                            <div class="alert alert-danger">{{ $message }}</div>
-                                        @enderror
+                                        <p class="error_msg" id="district_error"></p>
                                     </div>
                                     <!-- End .form-group -->
                                 </div>
@@ -122,9 +112,7 @@
                                                 @endforeach
                                             @endif
                                         </select>
-                                        @error('ward')
-                                            <div class="alert alert-danger">{{ $message }}</div>
-                                        @enderror
+                                        <p class="error_msg" id="ward_error"></p>
                                     </div>
                                     <!-- End .form-group -->
                                 </div>
@@ -132,9 +120,7 @@
                                     <label for="address">Address<span class="required">*</span> </label>
                                     <input type="text" class="form-control" id="address" placeholder="1234 Main St"
                                         required="" value="{{ $user->address }}" name="address">
-                                    @error('address')
-                                        <div class="alert alert-danger">{{ $message }}</div>
-                                    @enderror
+                                    <p class="error_msg" id="address_error"></p>
                                 </div>
                             </div>
                         </div>
@@ -149,32 +135,6 @@
                                 <div>Số lượng</div>
                                 <div>Thành tiền</div>
                             </div>
-                            @foreach ($productList['product'] as $product)
-                                <div class="item">
-                                    <div class="info">
-                                        <div class="img">
-                                            <img src="{{ $product->image }}" alt="{{ $product->name }}">
-                                        </div>
-                                        <div class="title">
-                                            <div class="name">
-                                                {{ $product->name }}
-                                            </div>
-                                            <div class="att">
-                                                {{ $product->attributeObject }}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="quantity">
-                                        {{ $product->quantity }}
-                                    </div>
-                                    <div class="price">
-                                        {{ $product->price }}
-                                    </div>
-                                    <div class="total">
-                                        {{ $product->totalPrice }}
-                                    </div>
-                                </div>
-                            @endforeach
                         </div>
                         <div class="custom-control custom-checkbox">
                             <input type="checkbox" class="custom-control-input" id="save-info" name="remember"
@@ -185,11 +145,59 @@
                                 <div class="alert alert-danger">{{ $message }}</div>
                             @enderror
                         </div>
-
-
                     </div>
                 </div>
             </form>
         </div>
     </div>
 @endsection
+@push('js')
+    <script>
+        const cartIds = new URLSearchParams(window.location.search).get('cartId');
+        var cartItems = JSON.parse(localStorage.getItem("cart_items"));
+        if (cartIds) {
+            const cartIdsArray = cartIds.split(',');
+            var cartDataLoader = [];
+            $.each(cartIdsArray, function(index, cardId) {
+                let item = cartItems.find(item => item.cartId === cardId);
+                if (item) {
+                    cartDataLoader.push(item);
+                }
+            });
+            load_product_in_checkout(cartDataLoader);
+        } else {
+            load_product_in_checkout(cartItems);
+        }
+
+
+        // handle place order
+        $("#placeOrderButton").click(function() {
+            event.preventDefault();
+            // Serialize dữ liệu từ form thành chuỗi URL-encoded
+            const formData = new URLSearchParams($("#checkoutForm").serialize());
+            formData.append('cartItems', JSON.stringify(cartItems));
+            $.ajax({
+                url: "{{ route('checkout.process') }}", // Đặt URL xử lý đơn hàng tại đây
+                method: "POST",
+                data: formData.toString(),
+                // contentType: "application/json",
+                success: function(response) {
+                    // Xử lý kết quả từ máy chủ sau khi hoàn thành thanh toán
+                    window.location.href =
+                        "/order/success?orderNumber=" + response.orderNumber;
+                    // Xử lý kết quả hoặc chuyển hướng đến trang kết quả
+                },
+                error: function(error) {
+                    // Xử lý lỗi nếu có
+                    $(".error_msg").html('');
+                    var errorResponse = JSON.parse(error.responseText);
+                    $.each(errorResponse.errors, function(index, error) {
+
+                        $("#" + index + "_error").html(error);
+                    });
+                    // console.log(errorResponse.errors);
+                }
+            });
+        });
+    </script>
+@endpush

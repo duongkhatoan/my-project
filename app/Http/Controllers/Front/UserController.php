@@ -84,4 +84,9 @@ class UserController extends Controller
         }
         return redirect()->back()->with('success', 'Update successful');
     }
+    public function myOrder(){
+        $user = Auth::user();
+        dd($user->orders);
+
+    }
 }

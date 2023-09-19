@@ -19,8 +19,7 @@ class FrontPageController extends Controller
         return view('home.index', compact('posts', 'productSpecial'));
     }
 
-    public function cart(){
-        session()->put('cartChecked', []);
+    public function cart(Request $request){
         return view('front.cart');
     }
 }

@@ -177,4 +177,9 @@ class Product extends Model implements HasMedia
             'disabledAttributeValues' => $disabledAttributeValues,
         ];
     }
+    public function getActualPriceAttribute()
+    {
+        // Kiểm tra nếu có giá giảm giá thì trả về giá giảm giá, ngược lại trả về giá bán
+        return $this->discount_price ? $this->discount_price : $this->sell_price;
+    }
 }

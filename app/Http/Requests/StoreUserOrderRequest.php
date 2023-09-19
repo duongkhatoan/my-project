@@ -21,7 +21,8 @@ class StoreUserOrderRequest extends FormRequest
      */
     public function rules(): array
     {
-        // dd($this->remember);
+
+        // dd($this->all());
         return [
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
@@ -30,7 +31,8 @@ class StoreUserOrderRequest extends FormRequest
             'district' => 'string|nullable',
             'ward' => 'string|nullable',
             'address' => 'string|nullable',
-            'remember' =>'boolean'
+            'remember' =>'boolean',
+            'cartItems' =>'required|json'
             // 'shipping_address' => 'required|string',
             // 'billing_address' => 'nullable|string',
             // 'payment_method' => 'required|string|max:255',

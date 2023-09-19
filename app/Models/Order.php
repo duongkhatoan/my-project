@@ -37,10 +37,10 @@ class Order extends Model
         $shipping_address = $data['address'] . ', ' . $ward[0]->name . ', ' . $district[0]->name . ', ' . $province[0]->name;
         $order_number = time() . mt_rand(1000, 9999);
         $status = 1;
-        if (session()->get('cartChecked')) {
-            $checkoutItem  = session()->get('cartChecked');
-            $cart = new Cart();
-            $productList = $cart->get_checkout_products($checkoutItem);
+        $cart = new Cart();
+        $productList = $cart->get_checkout_products($data['cartItems']);
+        if (!$productList) {
+            return false;
         }
         $total_amount = $productList['total'];
         $payment_method = 1;
@@ -59,7 +59,6 @@ class Order extends Model
             'name' => $data['name'],
             'phone' => $data['phone'],
             'email' => $data['email'],
-
         ]);
 
 

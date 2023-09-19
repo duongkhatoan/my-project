@@ -63,17 +63,17 @@ Route::get('logout', [UserController::class, 'logout'])->name('user.logout');
 
 
 // User
-Route::prefix('users')->name('users.')->group(function () {
-    Route::get('', [UserController::class, 'index'])->name('index');
-    Route::post('update/{user}', [UserController::class, 'update'])->name('update');
-    // Route::get('/create', [PostController::class, 'create'])->name('create');
-    // Route::post('/', [PostController::class, 'store'])->name('store');
-    // Route::get('/edit/{post}', [PostController::class, 'edit'])->name('edit');
-    // Route::post('/{post}', [PostController::class, 'update'])->name('update');
-    // Route::get('/delete/{post}', [PostController::class, 'destroy'])->name('delete');
-});
+Route::prefix('users')->name('users.')
+    ->middleware(['auth'])
+    ->group(function () {
+        Route::get('', [UserController::class, 'index'])->name('index');
+        Route::post('update/{user}', [UserController::class, 'update'])->name('update');
+        Route::get('/my-order', [UserController::class, 'myOrder'])->name('myOrder');
+    });
 
 
 Route::post('/checkboxProduct', [CartController::class, 'checkboxProduct'])->name('checkboxProduct');
 Route::get('/checkout', [CartController::class, 'checkout'])->name('checkout');
-Route::post('/order', [OrderController::class, 'order'])->name('order');
+Route::post('/checkout', [OrderController::class, 'processCheckout'])->name('checkout.process');
+Route::get('/order/success', [OrderController::class, 'orderSuccess'])->name('order.success');
+// Route::post('/order', [OrderController::class, 'order'])->name('order');

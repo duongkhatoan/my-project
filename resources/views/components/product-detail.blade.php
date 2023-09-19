@@ -81,8 +81,15 @@
                         </li>
                     </ul> --}}
                     <div class="price float-left w-100 d-flex">
-                        <div class="regular-price">$100.00</div>
-                        <div class="old-price">$150.00</div>
+                        @if ($productAttributes['productAttributes'])
+
+                            <div class="regular-price">Vui lòng chọn thuộc tính</div>
+                        @else
+                            <div class="regular-price">{{ $product->actual_price }}</div>
+                            @if ($product->sell_price)
+                                <div class="old-price">{{ $product->sell_price }}</div>
+                            @endif
+                        @endif
                     </div>
                     @if ($productAttributes)
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\AddToCartRequest;
+use App\Http\Requests\StoreUserOrderRequest;
 use App\Models\Cart;
 use App\Models\Product;
 use App\Models\ProductVariant;
@@ -15,19 +16,29 @@ class CartController extends Controller
 
     public function addToCart(AddToCartRequest $request)
     {
-        $validateData = $request->validated();
         $product = Product::find($request->product_id);
+        $product->price = $product->actualprice;
         if ($request->skuId) {
             $productVariant = ProductVariant::where('product_id', $product->id)->where('id', $request->skuId)->first();
             if (!$productVariant) {
                 return response()->json(['success' => false, 'message' => 'Product not exist']);
             }
-        }
+            $product->price = $productVariant->price;
+            // Lấy thông tin về các thuộc tính của ProductVariant
+            $variantAttributes = $productVariant->variantAttributes;
+            foreach ($variantAttributes as $variantAttribute) {
+                $attributes[] = $variantAttribute->attribute->name . ':' . $variantAttribute->attributeValue->value;
+            }
+            $attributes = join(', ', $attributes);
+            $product->attributeObject = $attributes;
 
+            $product->skuId = $productVariant->id;
+        }
+        // dd($product);
         if (!$product) {
             return response()->json(['success' => false, 'message' => 'Product not exist']);
         }
-        return response()->json(['success' => true, 'message' => 'Thêm sản phẩm vào giỏ hàng thành công'], 200);
+        return response()->json(['success' => true, 'message' => 'Thêm sản phẩm vào giỏ hàng thành công', 'product' => $product], 200);
     }
     public function checkboxProduct(Request $request)
     {
@@ -42,14 +53,8 @@ class CartController extends Controller
             return response()->json(['success' => false, 'message' => 'Please dont change anything']);
         }
     }
-    public function checkout()
+    public function checkout(Request $request)
     {
-        if (session()->get('cartChecked')) {
-            $checkoutItem  = session()->get('cartChecked');
-            $cart = new Cart();
-            $productList = $cart->get_checkout_products($checkoutItem);
-            // dd($productList['product']);
-        }
         $provinces = load_all_provinces();
         $districts = '';
         $wards = '';
@@ -61,6 +66,7 @@ class CartController extends Controller
                 $wards = load_wards_base_on_districts($user->district);
             }
         }
-        return view('front.checkout', compact('provinces', 'districts', 'wards', 'user','productList'));
+        return view('front.checkout', compact('provinces', 'districts', 'wards', 'user'));
     }
+
 }

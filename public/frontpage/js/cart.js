@@ -16,128 +16,227 @@ function countItemsInCart() {
 // Load all product from local storage
 function loadCartItems() {
     var cartItems = JSON.parse(localStorage.getItem("cart_items"));
-    $.ajax({
-        url: "/api/get-cart-items",
-        method: "POST",
-        data: {
-            cartItems: cartItems,
-        },
-        success: function (response) {
-            // Xử lý dữ liệu nhận được từ server
-            // Ví dụ: hiển thị thông tin sản phẩm trên sidebar
-            var cartItemsHTML = "";
-            let totalPrice = 0;
-            $.each(response, function (index, product) {
-                totalPrice += parseInt(product.price) * product.quantity;
-                cartItemsHTML += `
-            <div class="cart__item productid-${product.id}" data-id="${
-                    product.id
-                }" data-cartid = "${product.cartId}">
-                    <input type="checkbox" class="selectCheckOut" name="${
-                        product.cartId
-                    }" value="${product.cartId}">
-                    <div class="cart_item__img">
-                        <img src="/${product.image}" alt="${product.name}"
-                        style="height:70px;" loading="lazy">
-                    </div>
-                    <div class="cart_item__quantity quantity">
-                        <div class="btn-quantity plus btn-plus">
-                            <div class="icon"><svg viewBox="0 0 100 54" data-radium="true"
-                                    style="width: 100%; height: 100%;">
-                                    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                                        <g transform="translate(-123.000000, -352.000000)" fill="#4D4E4F">
-                                            <path
-                                                d="M221.976822,353.043478 C220.598555,351.652174 218.358871,351.652174 216.980603,353.043478 L173.048332,397.478261 L129.02992,353.043478 C127.651652,351.652174 125.411968,351.652174 124.0337,353.043478 C122.655433,354.434783 122.655433,356.695652 124.0337,358.086957 L170.464081,404.956522 C171.153215,405.652174 172.014632,406 172.962191,406 C173.823608,406 174.771166,405.652174 175.4603,404.956522 L221.890681,358.086957 C223.35509,356.695652 223.35509,354.434783 221.976822,353.043478 L221.976822,353.043478 Z"
-                                                transform="translate(173.000000, 379.000000) rotate(-180.000000) translate(-173.000000, -379.000000) ">
-                                            </path>
-                                        </g>
-                                    </g>
-                                </svg></div>
-                        </div>
-                        <div class="quantity-number">
-                            <div class="number qty">${product.quantity}</div>
-                        </div>
-                        <div class="btn-quantity minus btn-minus">
-                            <div class="icon"><svg viewBox="0 0 100 54" data-radium="true"
-                                    style="width: 100%; height: 100%;">
-                                    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                                        <g transform="translate(-286.000000, -352.000000)" fill="#4D4E4F">
-                                            <path
-                                                d="M384.976822,353.043478 C383.598555,351.652174 381.358871,351.652174 379.980603,353.043478 L336.048332,397.478261 L292.02992,353.043478 C290.651652,351.652174 288.411968,351.652174 287.0337,353.043478 C285.655433,354.434783 285.655433,356.695652 287.0337,358.086957 L333.464081,404.956522 C334.153215,405.652174 335.014632,406 335.962191,406 C336.823608,406 337.771166,405.652174 338.4603,404.956522 L384.890681,358.086957 C386.35509,356.695652 386.35509,354.434783 384.976822,353.043478 L384.976822,353.043478 Z">
-                                            </path>
-                                        </g>
-                                    </g>
-                                </svg></div>
-                        </div>
-                    </div>
-                    <div class="cart_item__info">
-                        <div class="pr-name">
-                        <h3>${product.name}</h3>
-                        </div>
-                        <div class="attribute">
-                        ${
-                            product.attributeObject
-                                ? product.attributeObject
-                                      .map(
-                                          (obj) =>
-                                              `<span class="attributeName">${obj.name}:</span>${obj.value}`
-                                      )
-                                      .join(" , ")
-                                : ""
-                        }
-                        </div>
-                        <div class="pr-price" style="padding-top: 5px">
-                            <span class="js_cart_item_price">${
-                                product.price
-                            }</span>đ
-                        </div>
-                    </div>
-                    <div class="cart_item__trash trash-container">
-                        <div class="icon">
-                            <svg viewBox="0 0 100 100" data-radium="true" style="width: 18px; height: auto;">
-                                <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                                    <g transform="translate(-123.000000, -515.000000)" fill="#CCCCCC">
-                                        <path
-                                            d="M126.528399,536.360896 L130.401033,536.360896 L139.437177,611.899225 C139.609294,613.70801 141.158348,615 142.965577,615 L203.034423,615 C204.841652,615 206.304647,613.70801 206.562823,611.899225 L215.598967,536.360896 L219.471601,536.360896 C221.450947,536.360896 223,534.810508 223,532.829457 C223,530.848407 221.450947,529.298019 219.471601,529.298019 L212.414802,529.298019 L192.449225,529.298019 L192.449225,518.531438 C192.449225,516.550388 190.900172,515 188.920826,515 L157.079174,515 C155.099828,515 153.550775,516.550388 153.550775,518.531438 L153.550775,529.298019 L133.585198,529.298019 L126.528399,529.298019 C124.549053,529.298019 123,530.848407 123,532.829457 C123,534.810508 124.635112,536.360896 126.528399,536.360896 L126.528399,536.360896 Z M160.607573,522.062877 L185.392427,522.062877 L185.392427,529.298019 L160.607573,529.298019 L160.607573,522.062877 L160.607573,522.062877 Z M208.45611,536.360896 L199.936317,608.023256 L146.063683,608.023256 L137.54389,536.360896 L208.45611,536.360896 L208.45611,536.360896 Z M161.296041,597.256675 C163.275387,597.256675 164.824441,595.706288 164.824441,593.725237 L164.824441,551.434109 C164.824441,549.453058 163.275387,547.90267 161.296041,547.90267 C159.316695,547.90267 157.767642,549.453058 157.767642,551.434109 L157.767642,593.725237 C157.767642,595.706288 159.316695,597.256675 161.296041,597.256675 Z M184.703959,597.256675 C186.683305,597.256675 188.232358,595.706288 188.232358,593.725237 L188.232358,551.434109 C188.232358,549.453058 186.683305,547.90267 184.703959,547.90267 C182.724613,547.90267 181.175559,549.453058 181.175559,551.434109 L181.175559,593.725237 C181.175559,595.706288 182.810671,597.256675 184.703959,597.256675 Z">
-                                        </path>
-                                    </g>
+    let totalPrice = 0;
+    var cartItemsHTML = "";
+    $.each(cartItems, function (index, product) {
+        totalPrice += parseInt(product.price) * product.quantity;
+        cartItemsHTML += `
+    <div class="cart__item productid-${product.product_id}" data-id="${
+            product.product_id
+        }" data-cartid = "${product.cartId}">
+            <input type="checkbox" class="selectCheckOut" name="${
+                product.cartId
+            }" value="${product.cartId}">
+            <div class="cart_item__img">
+                <img src="/${product.thumb}" alt="${product.name}"
+                style="height:70px;" loading="lazy">
+            </div>
+            <div class="cart_item__quantity quantity">
+                <div class="btn-quantity plus btn-plus">
+                    <div class="icon"><svg viewBox="0 0 100 54" data-radium="true"
+                            style="width: 100%; height: 100%;">
+                            <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                <g transform="translate(-123.000000, -352.000000)" fill="#4D4E4F">
+                                    <path
+                                        d="M221.976822,353.043478 C220.598555,351.652174 218.358871,351.652174 216.980603,353.043478 L173.048332,397.478261 L129.02992,353.043478 C127.651652,351.652174 125.411968,351.652174 124.0337,353.043478 C122.655433,354.434783 122.655433,356.695652 124.0337,358.086957 L170.464081,404.956522 C171.153215,405.652174 172.014632,406 172.962191,406 C173.823608,406 174.771166,405.652174 175.4603,404.956522 L221.890681,358.086957 C223.35509,356.695652 223.35509,354.434783 221.976822,353.043478 L221.976822,353.043478 Z"
+                                        transform="translate(173.000000, 379.000000) rotate(-180.000000) translate(-173.000000, -379.000000) ">
+                                    </path>
                                 </g>
-                            </svg>
-                        </div>
-                    </div>
-                    <div class="cart_item__trash_popover">
+                            </g>
+                        </svg></div>
+                </div>
+                <div class="quantity-number">
+                    <div class="number qty">${product.quantity}</div>
+                </div>
+                <div class="btn-quantity minus btn-minus">
+                    <div class="icon"><svg viewBox="0 0 100 54" data-radium="true"
+                            style="width: 100%; height: 100%;">
+                            <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                <g transform="translate(-286.000000, -352.000000)" fill="#4D4E4F">
+                                    <path
+                                        d="M384.976822,353.043478 C383.598555,351.652174 381.358871,351.652174 379.980603,353.043478 L336.048332,397.478261 L292.02992,353.043478 C290.651652,351.652174 288.411968,351.652174 287.0337,353.043478 C285.655433,354.434783 285.655433,356.695652 287.0337,358.086957 L333.464081,404.956522 C334.153215,405.652174 335.014632,406 335.962191,406 C336.823608,406 337.771166,405.652174 338.4603,404.956522 L384.890681,358.086957 C386.35509,356.695652 386.35509,354.434783 384.976822,353.043478 L384.976822,353.043478 Z">
+                                    </path>
+                                </g>
+                            </g>
+                        </svg></div>
+                </div>
+            </div>
+            <div class="cart_item__info">
+                <div class="pr-name">
+                <h3>${product.name}</h3>
+                </div>
+                <div class="attribute">
+                    <span class="attributeName">${
+                        product.attributes ? product.attributes : ""
+                    }</span>
+                </div>
+                <div class="pr-price" style="padding-top: 5px">
+                    <span class="js_cart_item_price">${product.price}</span>đ
+                </div>
+            </div>
+            <div class="cart_item__trash trash-container">
+                <div class="icon">
+                    <svg viewBox="0 0 100 100" data-radium="true" style="width: 18px; height: auto;">
+                        <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                            <g transform="translate(-123.000000, -515.000000)" fill="#CCCCCC">
+                                <path
+                                    d="M126.528399,536.360896 L130.401033,536.360896 L139.437177,611.899225 C139.609294,613.70801 141.158348,615 142.965577,615 L203.034423,615 C204.841652,615 206.304647,613.70801 206.562823,611.899225 L215.598967,536.360896 L219.471601,536.360896 C221.450947,536.360896 223,534.810508 223,532.829457 C223,530.848407 221.450947,529.298019 219.471601,529.298019 L212.414802,529.298019 L192.449225,529.298019 L192.449225,518.531438 C192.449225,516.550388 190.900172,515 188.920826,515 L157.079174,515 C155.099828,515 153.550775,516.550388 153.550775,518.531438 L153.550775,529.298019 L133.585198,529.298019 L126.528399,529.298019 C124.549053,529.298019 123,530.848407 123,532.829457 C123,534.810508 124.635112,536.360896 126.528399,536.360896 L126.528399,536.360896 Z M160.607573,522.062877 L185.392427,522.062877 L185.392427,529.298019 L160.607573,529.298019 L160.607573,522.062877 L160.607573,522.062877 Z M208.45611,536.360896 L199.936317,608.023256 L146.063683,608.023256 L137.54389,536.360896 L208.45611,536.360896 L208.45611,536.360896 Z M161.296041,597.256675 C163.275387,597.256675 164.824441,595.706288 164.824441,593.725237 L164.824441,551.434109 C164.824441,549.453058 163.275387,547.90267 161.296041,547.90267 C159.316695,547.90267 157.767642,549.453058 157.767642,551.434109 L157.767642,593.725237 C157.767642,595.706288 159.316695,597.256675 161.296041,597.256675 Z M184.703959,597.256675 C186.683305,597.256675 188.232358,595.706288 188.232358,593.725237 L188.232358,551.434109 C188.232358,549.453058 186.683305,547.90267 184.703959,547.90267 C182.724613,547.90267 181.175559,549.453058 181.175559,551.434109 L181.175559,593.725237 C181.175559,595.706288 182.810671,597.256675 184.703959,597.256675 Z">
+                                </path>
+                            </g>
+                        </g>
+                    </svg>
+                </div>
+            </div>
+            <div class="cart_item__trash_popover">
+                <div
+                    style="font-size: 14px; line-height: 24px; font-family: avenir-next-regular, arial; margin-bottom: 3px;">
+                    Xác nhận xoá sản phẩm?</div>
+                <div style="display: flex; justify-content: space-between;">
+                    <div class="submit-button js_cart_item__trash_agree">
                         <div
-                            style="font-size: 14px; line-height: 24px; font-family: avenir-next-regular, arial; margin-bottom: 3px;">
-                            Xác nhận xoá sản phẩm?</div>
-                        <div style="display: flex; justify-content: space-between;">
-                            <div class="submit-button js_cart_item__trash_agree">
-                                <div
-                                    style="font-size: 13px; font-family: Oswald, sans-serif; letter-spacing: 1.1px; text-transform: uppercase;">
-                                    Xoá</div>
-                            </div>
-                            <div class="submit-button js_cart_item__trash_close"
-                                style="background-color:#fff; color:#000;">
-                                <div
-                                    style="font-size: 13px; font-family: Oswald, sans-serif; letter-spacing: 1.1px; text-transform: uppercase;">
-                                    Hủy</div>
-                            </div>
-                        </div>
+                            style="font-size: 13px; font-family: Oswald, sans-serif; letter-spacing: 1.1px; text-transform: uppercase;">
+                            Xoá</div>
+                    </div>
+                    <div class="submit-button js_cart_item__trash_close"
+                        style="background-color:#fff; color:#000;">
+                        <div
+                            style="font-size: 13px; font-family: Oswald, sans-serif; letter-spacing: 1.1px; text-transform: uppercase;">
+                            Hủy</div>
                     </div>
                 </div>
-            `;
-            });
-            // Hiển thị danh sách sản phẩm trên sidebar
-            $("#listCartItems").html(cartItemsHTML);
-            $(".cart-area #totalHiddenPrice").val(totalPrice);
-            $(
-                ".page-cart .cart-collaterals table.table tr td .cart-total-price"
-            ).html(totalPrice);
-        },
-        error: function (xhr, status, error) {
-            // Xử lý lỗi nếu có
-            console.log("Error:", error);
-        },
+            </div>
+        </div>
+    `;
     });
+    // Hiển thị danh sách sản phẩm trên sidebar
+    $("#listCartItems").html(cartItemsHTML);
+    $(".cart-area #totalHiddenPrice").val(totalPrice);
+    $(".page-cart .cart-collaterals table.table tr td .cart-total-price").html(
+        totalPrice
+    );
+    // Render via ajax comment because change load jax -> load database to load via localstorage
+    // $.ajax({
+    //     url: "/api/get-cart-items",
+    //     method: "POST",
+    //     data: {
+    //         cartItems: cartItems,
+    //     },
+    //     success: function (response) {
+    //         // Xử lý dữ liệu nhận được từ server
+    //         // Ví dụ: hiển thị thông tin sản phẩm trên sidebar
+    //         var cartItemsHTML = "";
+    //         let totalPrice = 0;
+    //         $.each(response, function (index, product) {
+    //             totalPrice += parseInt(product.price) * product.quantity;
+    //             cartItemsHTML += `
+    //         <div class="cart__item productid-${product.id}" data-id="${
+    //                 product.id
+    //             }" data-cartid = "${product.cartId}">
+    //                 <input type="checkbox" class="selectCheckOut" name="${
+    //                     product.cartId
+    //                 }" value="${product.cartId}">
+    //                 <div class="cart_item__img">
+    //                     <img src="/${product.image}" alt="${product.name}"
+    //                     style="height:70px;" loading="lazy">
+    //                 </div>
+    //                 <div class="cart_item__quantity quantity">
+    //                     <div class="btn-quantity plus btn-plus">
+    //                         <div class="icon"><svg viewBox="0 0 100 54" data-radium="true"
+    //                                 style="width: 100%; height: 100%;">
+    //                                 <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+    //                                     <g transform="translate(-123.000000, -352.000000)" fill="#4D4E4F">
+    //                                         <path
+    //                                             d="M221.976822,353.043478 C220.598555,351.652174 218.358871,351.652174 216.980603,353.043478 L173.048332,397.478261 L129.02992,353.043478 C127.651652,351.652174 125.411968,351.652174 124.0337,353.043478 C122.655433,354.434783 122.655433,356.695652 124.0337,358.086957 L170.464081,404.956522 C171.153215,405.652174 172.014632,406 172.962191,406 C173.823608,406 174.771166,405.652174 175.4603,404.956522 L221.890681,358.086957 C223.35509,356.695652 223.35509,354.434783 221.976822,353.043478 L221.976822,353.043478 Z"
+    //                                             transform="translate(173.000000, 379.000000) rotate(-180.000000) translate(-173.000000, -379.000000) ">
+    //                                         </path>
+    //                                     </g>
+    //                                 </g>
+    //                             </svg></div>
+    //                     </div>
+    //                     <div class="quantity-number">
+    //                         <div class="number qty">${product.quantity}</div>
+    //                     </div>
+    //                     <div class="btn-quantity minus btn-minus">
+    //                         <div class="icon"><svg viewBox="0 0 100 54" data-radium="true"
+    //                                 style="width: 100%; height: 100%;">
+    //                                 <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+    //                                     <g transform="translate(-286.000000, -352.000000)" fill="#4D4E4F">
+    //                                         <path
+    //                                             d="M384.976822,353.043478 C383.598555,351.652174 381.358871,351.652174 379.980603,353.043478 L336.048332,397.478261 L292.02992,353.043478 C290.651652,351.652174 288.411968,351.652174 287.0337,353.043478 C285.655433,354.434783 285.655433,356.695652 287.0337,358.086957 L333.464081,404.956522 C334.153215,405.652174 335.014632,406 335.962191,406 C336.823608,406 337.771166,405.652174 338.4603,404.956522 L384.890681,358.086957 C386.35509,356.695652 386.35509,354.434783 384.976822,353.043478 L384.976822,353.043478 Z">
+    //                                         </path>
+    //                                     </g>
+    //                                 </g>
+    //                             </svg></div>
+    //                     </div>
+    //                 </div>
+    //                 <div class="cart_item__info">
+    //                     <div class="pr-name">
+    //                     <h3>${product.name}</h3>
+    //                     </div>
+    //                     <div class="attribute">
+    //                     ${
+    //                         product.attributeObject
+    //                             ? product.attributeObject
+    //                                   .map(
+    //                                       (obj) =>
+    //                                           `<span class="attributeName">${obj.name}:</span>${obj.value}`
+    //                                   )
+    //                                   .join(" , ")
+    //                             : ""
+    //                     }
+    //                     </div>
+    //                     <div class="pr-price" style="padding-top: 5px">
+    //                         <span class="js_cart_item_price">${
+    //                             product.price
+    //                         }</span>đ
+    //                     </div>
+    //                 </div>
+    //                 <div class="cart_item__trash trash-container">
+    //                     <div class="icon">
+    //                         <svg viewBox="0 0 100 100" data-radium="true" style="width: 18px; height: auto;">
+    //                             <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+    //                                 <g transform="translate(-123.000000, -515.000000)" fill="#CCCCCC">
+    //                                     <path
+    //                                         d="M126.528399,536.360896 L130.401033,536.360896 L139.437177,611.899225 C139.609294,613.70801 141.158348,615 142.965577,615 L203.034423,615 C204.841652,615 206.304647,613.70801 206.562823,611.899225 L215.598967,536.360896 L219.471601,536.360896 C221.450947,536.360896 223,534.810508 223,532.829457 C223,530.848407 221.450947,529.298019 219.471601,529.298019 L212.414802,529.298019 L192.449225,529.298019 L192.449225,518.531438 C192.449225,516.550388 190.900172,515 188.920826,515 L157.079174,515 C155.099828,515 153.550775,516.550388 153.550775,518.531438 L153.550775,529.298019 L133.585198,529.298019 L126.528399,529.298019 C124.549053,529.298019 123,530.848407 123,532.829457 C123,534.810508 124.635112,536.360896 126.528399,536.360896 L126.528399,536.360896 Z M160.607573,522.062877 L185.392427,522.062877 L185.392427,529.298019 L160.607573,529.298019 L160.607573,522.062877 L160.607573,522.062877 Z M208.45611,536.360896 L199.936317,608.023256 L146.063683,608.023256 L137.54389,536.360896 L208.45611,536.360896 L208.45611,536.360896 Z M161.296041,597.256675 C163.275387,597.256675 164.824441,595.706288 164.824441,593.725237 L164.824441,551.434109 C164.824441,549.453058 163.275387,547.90267 161.296041,547.90267 C159.316695,547.90267 157.767642,549.453058 157.767642,551.434109 L157.767642,593.725237 C157.767642,595.706288 159.316695,597.256675 161.296041,597.256675 Z M184.703959,597.256675 C186.683305,597.256675 188.232358,595.706288 188.232358,593.725237 L188.232358,551.434109 C188.232358,549.453058 186.683305,547.90267 184.703959,547.90267 C182.724613,547.90267 181.175559,549.453058 181.175559,551.434109 L181.175559,593.725237 C181.175559,595.706288 182.810671,597.256675 184.703959,597.256675 Z">
+    //                                     </path>
+    //                                 </g>
+    //                             </g>
+    //                         </svg>
+    //                     </div>
+    //                 </div>
+    //                 <div class="cart_item__trash_popover">
+    //                     <div
+    //                         style="font-size: 14px; line-height: 24px; font-family: avenir-next-regular, arial; margin-bottom: 3px;">
+    //                         Xác nhận xoá sản phẩm?</div>
+    //                     <div style="display: flex; justify-content: space-between;">
+    //                         <div class="submit-button js_cart_item__trash_agree">
+    //                             <div
+    //                                 style="font-size: 13px; font-family: Oswald, sans-serif; letter-spacing: 1.1px; text-transform: uppercase;">
+    //                                 Xoá</div>
+    //                         </div>
+    //                         <div class="submit-button js_cart_item__trash_close"
+    //                             style="background-color:#fff; color:#000;">
+    //                             <div
+    //                                 style="font-size: 13px; font-family: Oswald, sans-serif; letter-spacing: 1.1px; text-transform: uppercase;">
+    //                                 Hủy</div>
+    //                         </div>
+    //                     </div>
+    //                 </div>
+    //             </div>
+    //         `;
+    //         });
+    //         // Hiển thị danh sách sản phẩm trên sidebar
+    //         $("#listCartItems").html(cartItemsHTML);
+    //         $(".cart-area #totalHiddenPrice").val(totalPrice);
+    //         $(
+    //             ".page-cart .cart-collaterals table.table tr td .cart-total-price"
+    //         ).html(totalPrice);
+    //     },
+    //     error: function (xhr, status, error) {
+    //         // Xử lý lỗi nếu có
+    //         console.log("Error:", error);
+    //     },
+    // });
 }
 
 // add to cart
@@ -174,7 +273,7 @@ $(".addToCartButton").click(function () {
                     JSON.parse(localStorage.getItem("cart_items")) || [];
                 var updated = false;
                 for (var i = 0; i < cartItems.length; i++) {
-                    if (cartItems[i].product_id === productId) {
+                    if (cartItems[i].cartId === cartId) {
                         // Nếu sản phẩm đã tồn tại, tăng quantity lên
                         cartItems[i].quantity += quantity;
                         updated = true;
@@ -243,7 +342,7 @@ $(document).ready(function () {
                 ).text()
             );
             // Lấy productId từ thuộc tính data-id
-            var productId = cartItem.data("id");
+            var cartId = cartItem.data("cartid");
 
             // Lấy danh sách sản phẩm từ local storage
             var cartItems =
@@ -251,7 +350,7 @@ $(document).ready(function () {
 
             // Tìm sản phẩm cần xóa trong danh sách
             var indexToRemove = cartItems.findIndex(function (item) {
-                return item.product_id === productId;
+                return item.cartId === cartId;
             });
 
             if (indexToRemove !== -1) {
@@ -393,12 +492,19 @@ $(".btn_add_to_cart").click(function () {
                     var cartItem = {
                         product_id: productId,
                         quantity: quantity,
+                        name: response.product.name,
+                        thumb: response.product.image,
+                        price: response.product.price,
                         cartId: cartId,
                     };
                 } else {
                     var cartItem = {
                         product_id: productId,
                         quantity: quantity,
+                        name: response.product.name,
+                        thumb: response.product.image,
+                        price: response.product.price,
+                        attributes: response.product.attributeObject,
                         skuId: skuId,
                         cartId: cartId,
                     };
@@ -441,7 +547,11 @@ $(".btn_add_to_cart").click(function () {
     });
 });
 function generateShortCartId(productId, skuId) {
-    cartId = "cartId_" + productId + "_" + skuId;
+    if (skuId) {
+        cartId = "cartId_" + productId + "_" + skuId;
+    } else {
+        cartId = "cartId_" + productId + "_" + getRandomInt(99);
+    }
     return cartId;
 }
 
@@ -453,7 +563,8 @@ function checkProductToCheckOut() {
     var totalPriceCheckbox = 0;
     var checkedCheckboxes = $(".selectCheckOut:checked");
     var cartItems = JSON.parse(localStorage.getItem("cart_items")) || [];
-    const arrayCheck  = [];
+    var arrayCheck = [];
+    var selectProductInCart = [];
     if (checkedCheckboxes.length > 0) {
         checkedCheckboxes.each(function () {
             cartId = $(this).val();
@@ -462,39 +573,46 @@ function checkProductToCheckOut() {
                 return item.cartId === cartId;
             });
             var itemToUpdate = cartItems[indexToUpdate];
-            if(itemToUpdate){
+            if (itemToUpdate) {
                 arrayCheck.push(itemToUpdate);
+                selectProductInCart.push(itemToUpdate["cartId"]);
             }
             price = get_price_product($(this));
             totalPriceCheckbox += price;
         });
-        $.ajax({
-            url: "/checkboxProduct",
-            method: "POST",
-            data: {
-                data :arrayCheck,
-                _token: csrfToken,
-            },
-            success: function (response) {
-                // Kiểm tra kết quả từ controller
-                if (response.success) {
-                } else {
-                    // Nếu có lỗi, hiển thị thông báo lỗi từ server
-                    alert(response.error);
-                }
-            },
-            error: function (error) {
-                // Xử lý lỗi nếu có
-                console.error("Error adding product to cart:", error);
-            },
-        });
+        // localStorage.setItem("cart_checkout_items", JSON.stringify(arrayCheck));
+        // $.ajax({
+        //     url: "/checkboxProduct",
+        //     method: "POST",
+        //     data: {
+        //         data: arrayCheck,
+        //         _token: csrfToken,
+        //     },
+        //     success: function (response) {
+        //         // Kiểm tra kết quả từ controller
+        //         if (response.success) {
+        //         } else {
+        //             // Nếu có lỗi, hiển thị thông báo lỗi từ server
+        //             alert(response.error);
+        //         }
+        //     },
+        //     error: function (error) {
+        //         // Xử lý lỗi nếu có
+        //         console.error("Error adding product to cart:", error);
+        //     },
+        // });
         $(
             ".page-cart .cart-collaterals table.table tr td .cart-total-price"
         ).html(totalPriceCheckbox);
+        $(".cart-area #checkoutRediPage").attr(
+            "href",
+            "/checkout?cartId=" + selectProductInCart
+        );
     } else {
         $(
             ".page-cart .cart-collaterals table.table tr td .cart-total-price"
         ).html(totalPriceDefault);
+        $(".cart-area .checkoutRediPage").attr("href", "/checkout");
     }
 }
 function get_price_product(button) {
@@ -512,4 +630,45 @@ function get_price_product(button) {
     var itemToUpdate = cartItems[indexToUpdate];
 
     return price * itemToUpdate.quantity;
+}
+
+function getRandomInt(max) {
+    return Math.floor(Math.random() * max);
+}
+
+function load_product_in_checkout(data) {
+    var cartItemsHTML = "";
+    let totalPrice = 0;
+    $.each(data, function (index, product) {
+        totalPrice += parseInt(product.price) * product.quantity;
+        cartItemsHTML += `
+        <div class="item">
+            <div class="info">
+                <div class="img">
+                    <img src="${product.thumb}" alt="${product.name}">
+                </div>
+                <div class="title">
+                    <div class="name">
+                        ${product.name}
+                    </div>
+                    <div class="att">
+                    ${product.attributes ? product.attributes : ""}
+                    </div>
+                </div>
+            </div>
+            <div class="price">
+                ${product.price}
+            </div>
+            <div class="quantity">
+                ${product.quantity}
+            </div>
+            <div class="total">
+                ${product.price * product.quantity}
+            </div>
+        </div>
+
+        `;
+    });
+    $(".checkout-inner .cart-block-right .productList").append(cartItemsHTML);
+    $(".checkout-inner .cart-block-left #totalPrice").html(totalPrice);
 }

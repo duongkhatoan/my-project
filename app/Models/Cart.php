@@ -19,23 +19,25 @@ class Cart extends Model
         $products['total'] = 0;
         // dd($products);
         foreach ($cartItems as $cartItem) {
+
             $attributes = [];
-            $product = Product::where('id', $cartItem['product_id'])
+            // dd($cartItem);
+            $product = Product::where('id', $cartItem->product_id)
                 ->select('id', 'name', 'discount_price', 'sell_price', 'image')
                 ->first();
+
             if (!$product) {
-                return response()->json(['success' => false, 'message' => 'Product not exist']);
+                return false;
             }
-            $product->quantity = $cartItem['quantity'];
+            $product->quantity = $cartItem->quantity;
             $product->price = $product->discount_price > 0 ? $product->discount_price : $product->sell_price;
-            if (!empty($cartItem['skuId'])) {
-                $productVariant = ProductVariant::where('id', $cartItem['skuId'])
-                    ->where('product_id', $cartItem['product_id'])->first();
+            if (!empty($cartItem->skuId)) {
+                $productVariant = ProductVariant::where('id', $cartItem->skuId)
+                    ->where('product_id', $cartItem->product_id)->first();
 
                 // TODO: NEED TO UPDATE INFOMATION ABOUT ATTRIBUTES AND ATTRIBUTES VALUE. add attributes selected at least (just try -> not neccessary)
                 $product->price = $productVariant->price;
                 if ($productVariant) {
-
                     // Lấy thông tin về các thuộc tính của ProductVariant
                     $variantAttributes = $productVariant->variantAttributes;
                     foreach ($variantAttributes as $variantAttribute) {
@@ -43,11 +45,13 @@ class Cart extends Model
                     }
                     $attributes = join(', ', $attributes);
                     $product->attributeObject = $attributes;
+                } else {
+                    return false;
                 }
                 $product->skuId = $productVariant->id;
             }
             $product->totalPrice = $product->quantity * $product->price;
-            $product->cartId = $cartItem['cartId'];
+            $product->cartId = $cartItem->cartId;
             $products['total'] = $products['total'] + $product->price;
             $products['product'][] = $product;
         }
