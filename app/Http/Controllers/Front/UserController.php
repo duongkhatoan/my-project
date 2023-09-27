@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginUserRequest;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserFrontRequest;
+use App\Models\Order;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -84,9 +85,20 @@ class UserController extends Controller
         }
         return redirect()->back()->with('success', 'Update successful');
     }
-    public function myOrder(){
+    public function myOrder()
+    {
         $user = Auth::user();
-        dd($user->orders);
-
+        $myOrders = $user->orderinfo;
+        return view('front.user.my_orders', compact('user', 'myOrders'));
+    }
+    public function detailOrder(Order $order)
+    {
+        if ($order->user_id == auth()->id()) {
+            // Hiển thị trang chi tiết đơn hàng
+            return view('front.user.order.detail', compact('order'));
+        } else {
+            // Xử lý khi đơn hàng không thuộc về người dùng hiện tại
+            return abort(403); // Hoặc chuyển hướng đến trang lỗi hoặc làm gì đó khác
+        }
     }
 }

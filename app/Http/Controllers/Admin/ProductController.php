@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreProductAdminRequest;
 use App\Http\Requests\UpdateProductAdminRequest;
 use App\Models\Attribute;
+use App\Models\Brand;
 use App\Models\Category;
 use App\Models\CategoryProduct;
 use App\Models\Product;
@@ -26,7 +27,8 @@ class ProductController extends Controller
     public function create()
     {
         $categoryTree = (new Category())->buildCategoryTree();
-        return view('admin.product.create', compact('categoryTree'));
+        $brands = Brand::all();
+        return view('admin.product.create', compact('categoryTree','brands'));
     }
     public function store(StoreProductAdminRequest $request)
     {
@@ -62,10 +64,12 @@ class ProductController extends Controller
         $categorySelected = $product->categories()->pluck('id')->toArray();
         $attributes = Attribute::all();
         $productVariants = $product->variants;
-        return view('admin.product.edit', compact('categoryTree', 'product', 'categorySelected', 'attributes', 'productVariants'));
+        $brands = Brand::all();
+        return view('admin.product.edit', compact('categoryTree', 'product', 'categorySelected', 'attributes', 'productVariants','brands'));
     }
     public function update(UpdateProductAdminRequest $request, Product $product)
     {
+        // dd($request->all());
         // Kiểm tra nếu slug đã được thay đổi
         if ($request->has('slug') && $request->slug !== $product->slug) {
             // Kiểm tra xem slug mới có duy nhất hay không

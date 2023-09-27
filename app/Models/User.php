@@ -52,4 +52,13 @@ class User extends Authenticatable
     {
         return $this->hasMany(Order::class);
     }
+    public function getOrderInfoAttribute()
+    {
+        return $this->orders()
+        ->with('orderProducts.product')
+        ->with(['orderProducts.productVariant' => function ($query) {
+            $query->select('id', 'product_id', 'price'); // Chọn các trường cần thiết từ bảng product_variants
+        }])
+        ->paginate(10);
+    }
 }

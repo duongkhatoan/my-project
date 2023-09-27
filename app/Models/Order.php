@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\OrderStatusEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -20,9 +21,13 @@ class Order extends Model
         'name',
         'phone',
         'email',
+        'order_note'
 
     ];
-
+    public function getRouteKeyName()
+    {
+        return 'order_number';
+    }
     // Định nghĩa quan hệ với người dùng (nếu có)
     public function user()
     {
@@ -36,7 +41,7 @@ class Order extends Model
         $ward = load_info_ward($data['ward']);
         $shipping_address = $data['address'] . ', ' . $ward[0]->name . ', ' . $district[0]->name . ', ' . $province[0]->name;
         $order_number = time() . mt_rand(1000, 9999);
-        $status = 1;
+        $status = OrderStatusEnum::PENDING;
         $cart = new Cart();
         $productList = $cart->get_checkout_products($data['cartItems']);
         if (!$productList) {
@@ -59,6 +64,7 @@ class Order extends Model
             'name' => $data['name'],
             'phone' => $data['phone'],
             'email' => $data['email'],
+            'order_note' => $data['order_note'],
         ]);
 
 
@@ -73,5 +79,29 @@ class Order extends Model
         }
 
         return $order;
+    }
+    public function orderProducts()
+    {
+        return $this->hasMany(OrderProduct::class);
+    }
+    public function getTotalAmountAttribute()
+    {
+        // Tính tổng giá tiền của đơn hàng
+        $total = 0;
+        foreach ($this->orderProducts as $orderProduct) {
+            $product = $orderProduct->product;
+            $quantity = $orderProduct->quantity;
+
+            // Lấy giá sản phẩm, nếu có biến thể sản phẩm thì sử dụng giá từ biến thể
+            $price = $orderProduct->productVariant ? $orderProduct->productVariant->price : $product->actual_price;
+
+            $total += $price * $quantity;
+        }
+
+        return $total;
+    }
+    public function getStatusTextAttribute()
+    {
+        return ucfirst(OrderStatusEnum::getDescription($this->status));
     }
 }

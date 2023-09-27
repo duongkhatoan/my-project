@@ -31,8 +31,16 @@ class StoreUserOrderRequest extends FormRequest
             'district' => 'string|nullable',
             'ward' => 'string|nullable',
             'address' => 'string|nullable',
-            'remember' =>'boolean',
-            'cartItems' =>'required|json'
+            'remember' => 'boolean',
+            'cartItems' => [
+                'required',
+                function ($attribute, $value, $fail) {
+                    if (!is_string($value) || !json_decode($value)) {
+                        $fail('The ' . $attribute . ' field must be a valid JSON string.');
+                    }
+                },
+            ],
+            'order_note' =>'nullable|string|max:255',
             // 'shipping_address' => 'required|string',
             // 'billing_address' => 'nullable|string',
             // 'payment_method' => 'required|string|max:255',

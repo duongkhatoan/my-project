@@ -124,11 +124,14 @@
                         <input value="1" type="number" name="quantity" class="quantity">
                         {{-- <button type="button" class="btn btn-primary btn-cart m-0" data-target="#cart-pop"
                             data-toggle="modal"><i class="material-icons">shopping_cart</i> Add To Cart</button> --}}
+
                         <button type="button" class="btn btn-primary btn_add_to_cart m-0"
+                            {{ $productAttributes['productAttributes'] ? 'disabled' : '' }}
                             data-product={{ $product->id }}>
                             <i class="material-icons">shopping_cart</i>
                             Add To Cart
                         </button>
+
                     </div>
                     <div class="tt-links d-flex align-items-center float-left w-100 mb-15">
                         <a class="link btn-compare"><i class="material-icons">equalizer</i><span>Compare</span></a>

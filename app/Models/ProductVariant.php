@@ -41,4 +41,14 @@ class ProductVariant extends Model
     {
         return $this->hasMany(VariantAttribute::class, 'variant_id');
     }
+    public function getOptionValueAttribute()
+    {
+        $variantAttributes = $this->variantAttributes;
+        foreach ($variantAttributes as $variantAttribute) {
+            $attributes[] = $variantAttribute->attribute->name . ':' . $variantAttribute->attributeValue->value;
+        }
+        $attributes = join(', ', $attributes);
+        return $attributes;
+    }
+
 }

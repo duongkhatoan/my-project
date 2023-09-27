@@ -25,6 +25,7 @@ class Product extends Model implements HasMedia
         'discount_price',
         'sell_price',
         'image',
+        'brand_id',
     ];
     protected static function boot()
     {
@@ -181,5 +182,20 @@ class Product extends Model implements HasMedia
     {
         // Kiểm tra nếu có giá giảm giá thì trả về giá giảm giá, ngược lại trả về giá bán
         return $this->discount_price ? $this->discount_price : $this->sell_price;
+    }
+    public function orderProducts()
+    {
+        return $this->hasMany(OrderProduct::class);
+    }
+    public function getPriceRangeAttribute()
+    {
+        $minPrice = $this->variants->min('price');
+        $maxPrice = $this->variants->max('price');
+
+        return $minPrice . '-' . $maxPrice;
+    }
+    public function brand()
+    {
+        return $this->belongsToMany(Brand::class);
     }
 }

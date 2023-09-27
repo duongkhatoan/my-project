@@ -27,4 +27,7 @@ class OrderProduct extends Model
     {
         return $this->belongsTo(ProductVariant::class);
     }
+    public function getPriceAttribute(){
+        return $this->productVariant ? $this->productVariant->price : $this->product->actual_price;
+    }
 }

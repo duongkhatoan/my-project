@@ -125,6 +125,7 @@
                             </div>
                         </div>
                         <div class="productList">
+                            <p class="error_msg" id="product"></p>
                             <div class="item header">
                                 <div>
                                     Sản phẩm
@@ -145,6 +146,13 @@
                                 <div class="alert alert-danger">{{ $message }}</div>
                             @enderror
                         </div>
+                        <div class="order_note">
+                            <label for="order_note">Order_note</label>
+                            <input type="text" class="form-control" id="order_note"
+                                required="" name="order_note">
+                            <p class="error_msg" id="order_note"></p>
+                        </div>
+
                     </div>
                 </div>
             </form>
@@ -165,6 +173,7 @@
                 }
             });
             load_product_in_checkout(cartDataLoader);
+            cartItems = cartDataLoader;
         } else {
             load_product_in_checkout(cartItems);
         }
@@ -183,6 +192,23 @@
                 // contentType: "application/json",
                 success: function(response) {
                     // Xử lý kết quả từ máy chủ sau khi hoàn thành thanh toán
+                    const cartIds = new URLSearchParams(window.location.search).get('cartId');
+                    var cartItems = JSON.parse(localStorage.getItem("cart_items"));
+                    if (cartIds) {
+                        const cartIdsArray = cartIds.split(',');
+                        $.each(cartIdsArray, function(index, cardId) {
+                            let indexToRemove = cartItems.findIndex(item => item.cartId ===
+                                cardId);
+                            if (indexToRemove !== -1) {
+                                cartItems.splice(indexToRemove, 1);
+                            }
+                        });
+                        localStorage.setItem("cart_items", JSON.stringify(cartItems));
+                    } else {
+                        localStorage.removeItem("cart_items");
+                    }
+
+
                     window.location.href =
                         "/order/success?orderNumber=" + response.orderNumber;
                     // Xử lý kết quả hoặc chuyển hướng đến trang kết quả

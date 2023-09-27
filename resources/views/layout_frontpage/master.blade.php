@@ -22,7 +22,7 @@
     <link href="{{ asset('frontpage/css/animate.css') }}" rel="stylesheet">
     <link href="{{ asset('frontpage/css/owl-carousel.css') }}" rel="stylesheet">
     <link href="{{ asset('frontpage/css/lightbox.css') }}" rel="stylesheet">
-    <link href="{{ asset('frontpage/css/cookiealert.css') }}" rel="stylesheet">
+    {{-- <link href="{{ asset('frontpage/css/cookiealert.css') }}" rel="stylesheet"> --}}
     <link href="{{ asset('frontpage/css/panelsidebar.css') }}" rel="stylesheet">
     <link href="{{ asset('frontpage/css/jquery-ui.css') }}" rel="stylesheet">
     <script src="https://kit.fontawesome.com/43a5bb49f6.js" crossorigin="anonymous"></script>
@@ -39,7 +39,7 @@
     @vite(['resources/scss/app.scss', 'resources/js/app.js'])
 </head>
 
-<body class="index layout2">
+<body class="index layout2 @yield('body-class', 'default-class')">
 
     <!-- Begin header -->
     @include('layout_frontpage.header')
@@ -131,7 +131,7 @@
                         </div>
                         <div class="checkbox-link d-flex justify-content-between">
                             <div class="left-col">
-                                <input type="checkbox" id="remember_me" name="remember_me"><label for="remember_me">Remember Me</label>
+                                <input type="checkbox" id="remember_me" name="remember_me" value="1"><label for="remember_me">Remember Me</label>
                             </div>
                             <div class="right-col"><a href="#">Forget Password?</a></div>
                         </div>
@@ -147,7 +147,7 @@
     </div>
 
     <!-- product_view modal -->
-    <div class="modal fade product_view" id="product_view" tabindex="-1" role="dialog" aria-hidden="true">
+    {{-- <div class="modal fade product_view" id="product_view" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -384,7 +384,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> --}}
 
     <!-- Bootstrap core JavaScript
     ================================================== -->

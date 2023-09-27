@@ -27,6 +27,7 @@ class UpdateProductAdminRequest extends FormRequest
             'description' => 'nullable|string',
             'category_id' => 'array',
             'category_id.*' => 'exists:categories,id',
+            'brand_id' => 'exists:brands,id',
             'discount_price' => 'numeric|min:' . ($this->input('discount_price') ?? 0),
             'sell_price' => 'numeric',
             'slug' => 'required|string',

@@ -204,7 +204,7 @@
                     </div>
                 </div>
                 <div class="sidebar col-xl-3 col-lg-3 order-lg-1">
-                    sds
+                    <a href="{{ route('users.myOrder') }}" class="">My orders</a>
                 </div>
             </div>
         </div>

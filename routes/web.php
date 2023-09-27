@@ -69,6 +69,7 @@ Route::prefix('users')->name('users.')
         Route::get('', [UserController::class, 'index'])->name('index');
         Route::post('update/{user}', [UserController::class, 'update'])->name('update');
         Route::get('/my-order', [UserController::class, 'myOrder'])->name('myOrder');
+        Route::get('/order/{order}', [UserController::class, 'detailOrder'])->name('detailOrder');
     });
 
 
@@ -76,4 +77,5 @@ Route::post('/checkboxProduct', [CartController::class, 'checkboxProduct'])->nam
 Route::get('/checkout', [CartController::class, 'checkout'])->name('checkout');
 Route::post('/checkout', [OrderController::class, 'processCheckout'])->name('checkout.process');
 Route::get('/order/success', [OrderController::class, 'orderSuccess'])->name('order.success');
+Route::get('/order/cancleOrder/{order}', [OrderController::class, 'cancleOrder'])->name('cancleOrder');
 // Route::post('/order', [OrderController::class, 'order'])->name('order');

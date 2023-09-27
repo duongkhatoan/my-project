@@ -1,6 +1,6 @@
 <div class="product-thumb">
     <div class="image zoom">
-        <a href="{{ route('product.show',$product) }}">
+        <a href="{{ route('product.show', $product) }}">
             <img src="{{ asset($product->image) }}" alt="01" />
             <img src="{{ $product->getFirstMediaUrl('thumbs') }}" alt="02" class="second_image img-responsive" />
         </a>
@@ -19,11 +19,19 @@
                 <span class="fa fa-stack"><i class="material-icons off">star</i></span>
             </div>
         </div>
+        @if (!$product->variants->isEmpty())
+            <div class="price variant">
+                <div class="regular-price">{{ $product->price_range }}</div>
+            </div>
+        @else
+            <div class="price">
+                <div class="regular-price">{{ $product->actual_price }}</div>
+                @if ($product->sell_price)
+                    <div class="old-price">{{ $product->sell_price }}</div>
+                @endif
+            </div>
+        @endif
 
-        <div class="price">
-            <div class="regular-price">$100.00</div>
-            <div class="old-price">$150.00</div>
-        </div>
         <div class="button-wrapper">
             <div class="button-group text-center">
                 <button type="button" class="btn btn-primary btn-cart" data-target="#cart-pop" data-toggle="modal"

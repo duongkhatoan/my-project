@@ -72,6 +72,20 @@
                                 @enderror
                             </div>
                             <div class="form-group">
+                                <h5>Category <span class="text-danger"></span></h5>
+                                <div class="form-group">
+                                    <select name="brand_id" class="form-control select2" style="width: 100%;">
+                                        <option value="">Select brand</option>
+                                        @foreach ($brands as $brand)
+                                            <option value="{{ $brand->id }}">{{ $brand->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                @error('brand_id')
+                                    <div class="alert alert-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="form-group">
                                 <h5>Discount Price<span class="text-danger">*</span></h5>
                                 <div class="controls">
                                     <input type="number" name="discount_price" class="form-control"

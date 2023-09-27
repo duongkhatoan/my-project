@@ -28,6 +28,7 @@ class StoreProductAdminRequest extends FormRequest
             'description' => 'nullable|string',
             'category_id' => 'array',
             'category_id.*' => 'exists:categories,id',
+            'brand_id' => 'exists:brands,id',
             'discount_price' => 'nullable|numeric',
             'sell_price' => 'nullable|numeric|min:' . ($this->input('discount_price') ?? 0),
         ];

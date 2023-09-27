@@ -143,6 +143,21 @@
                                 @enderror
                             </div>
                             <div class="form-group">
+                                <h5>Brand <span class="text-danger"></span></h5>
+                                <div class="form-group">
+                                    <select name="brand_id" class="form-control select2" style="width: 100%;">
+                                        <option value="">Select brand</option>
+                                        @foreach ($brands as $brand)
+                                            <option {{ $brand->id == $product->brand_id ? 'selected' : '' }}
+                                                value="{{ $brand->id }}">{{ $brand->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                @error('file')
+                                    <div class="alert alert-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="form-group">
                                 <h5>Slug<span class="text-danger">*</span></h5>
                                 <div class="controls">
                                     <input type="text" name="slug" class="form-control"
